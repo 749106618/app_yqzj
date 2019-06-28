@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../../css/self/orderInquiry.css"/>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">订单查询</h1>
+		</header>
+		<div class="mui-content">
+			<div class="mui-card">
+				<div class="mui-card-header mui-text-center">
+					<img src="../../../images/self/3.png"/>
+					<p>未查询到该订单</p>
+				</div>				
+				<div class="mui-card-footer">
+					<h5><i>•</i>未查询到订单的可能原因：</h5>		
+					<p>1.订单有延迟，建议下单后5分钟再查询</p>
+					<p>2.非您购买或推广的订单</p>
+					<p>3.不是通过有券之家app下的订单</p>
+				</div>
+			</div>
+			<div class="mui-content-padded">
+				<button type="button" id="errorButton" class="mui-btn mui-btn-blue mui-btn-block">重新查询</button>
+			</div>
+			
+		</div>	
+		<script src="../../../js/mui.min.js"></script>
+		<script src="../../../js/rem.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init();
+			
+			document.getElementById("errorButton").addEventListener("tap",function(){
+				mui.back();
+			})
+		</script>
+	</body>
+
+</html>

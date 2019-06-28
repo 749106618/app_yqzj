@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<title>商品关键字搜索</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="../../js/rem.js"></script>
+		<link href="../../iconfont/iconfont.css" rel="stylesheet">
+		<link href="../../css/mui.min.css" rel="stylesheet">
+		<link href="../../css/all.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="../../css/base.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/style.css" />
+		<style type="text/css">
+			.mui-content {
+				background-color: #FFFFFF;
+			}
+
+			.mui-content>.mui-table-view:first-child {
+				margin-top: 0;
+			}
+
+			.mui-bar-nav {
+				background-color: #FFFFFF;
+			}
+
+			.mui-media-body img {
+				width: 13px;
+				height: 13px;
+			}
+
+			.classify {
+				background-color: #fff;
+				border-radius: 8px;
+				height: 600px;
+				position: relative;
+				padding: 5px;
+			}
+
+			.classify-delete {
+				border-top-left-radius: 8px;
+				border-top-right-radius: 8px;
+				height: 50px;
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				box-shadow: 0 1px 2px #ccc;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+			}
+
+			.classify-delete .active {
+				color: #000;
+			}
+			
+			.classify-delete .active span {
+				font-size: 40px;
+			}
+			.classify-delete .btn-success{
+				margin: 15px;
+			}
+			.classify-title {
+				font-size: 16px;
+				margin-top: 15px;
+				font-weight: 600;
+			}
+
+			.first-title {
+				margin-top: 60px;
+			}
+
+			.classify-list {
+				overflow: hidden;
+				margin-top: 5px;
+			}
+
+			.classify-list li {
+				float: left;
+				width: 25%;
+				padding: 5px .2rem;
+			}
+			.classify-list .cneter-li{
+				width: 7%;
+				height: 40px;
+			}
+			.classify-list .cneter-li .line{
+				width: 100%;
+				margin-top: 18px;
+				height: 4px;
+				background-color: #101010;
+				border-radius:2px;
+			}
+			.classify-list li .input {
+				color: #000;
+				display: block !important;
+				background-color: #F1F1F1;
+				border-radius: 2px;
+				font-size: 12px;
+				height: 40px;
+				text-align: center;
+				padding: 0;
+				border: none;
+			}
+
+			.classify-list li .input:nth-child(3n+1) {
+				margin-left: 0;
+			}
+
+			.classify-list li a {
+				color: #000;
+				display: block !important;
+				border-radius: 2px;
+				background-color: #F1F1F1;
+				margin: 5px .2rem;
+				font-size: 12px;
+				height: 40px;
+				text-align: center;
+				padding: 0;
+				border: none;
+				line-height: 40px;
+			}
+			.classify-list li a:active {
+				background: #f0f0f0;
+				opacity: 0.5;
+			}
+			
+			.classify-list li a:nth-child(3n+1) {
+				margin-left: 0;
+			}
+
+			.not-classify {
+				text-align: center;
+
+			}
+
+			.classify-list li .red {
+				color: #fff;
+				background-color: #dd524d;
+			}
+		</style>
+	</head>
+
+	<body>
+
+
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title" id="titleText"></h1>
+			<a href="#picture" class="toggleSide mui-icon mui-action-menu mui-icon-bars mui-pull-right"></a>
+		</header>
+
+		<div class="mui-content" id="content" v-cloak>
+			<!-- 分类搜索 -->
+			<div id="picture" class="mui-popover mui-popover-action mui-popover-bottom">
+				<div class="classify">
+					<div class="classify-delete">
+						<a class="active" href="#"><span class="mui-icon mui-icon-closeempty"></span></a>
+						<div class="btn-success mui-btn mui-btn-primary">确定</div>
+					</div>
+					<div class="classify-title first-title">商品标题</div>
+					<ul class="classify-list">
+						<li>
+							<input class="input" type="text" maxlength="7" placeholder="请输入标题">
+						</li>
+					</ul>
+					<div class="classify-title">佣金起始价格</div>
+					<ul class="classify-list">
+						<li>
+							<input class="input" type="text"  maxlength="7" placeholder="最小价格"> 
+						</li>
+						<li class="cneter-li"><div class="line"></div> </li>
+						<li>
+							<input class="input" type="text"  maxlength="7" placeholder="最大价格"> 
+						</li>
+					</ul>
+					<div class="classify-title">商品起始价格</div>
+					<ul class="classify-list">
+						<li>
+							<input class="input" type="text"  maxlength="7" placeholder="最小价格"> 
+						</li>
+						<li class="cneter-li"><div class="line"></div> </li>
+						<li>
+							<input class="input" type="text"  maxlength="7" placeholder="最大价格"> 
+						</li>
+					</ul>
+					<div class="classify-title">是否天猫商品</div>
+					<ul class="classify-list">
+						<li><a @tap="tabTm" class="tm-one">是</a></li>
+						<li><a @tap="tabTm"  class="tm-two">否</a></li>
+					</ul>
+					<div class="classify-title">是否包邮</div>
+					<ul class="classify-list">
+						<li><a @tap="tabSend" class="send-one">是</a></li>
+						<li><a @tap="tabSend" class="send-two">否</a></li>
+					</ul>
+				</div>
+			</div>
+			<div id="pullrefresh" class="mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<div class="home-fashion mui-content-padded">
+						<ul class="mui-table-view mui-grid-view grid" id="good" v-if="layout == 'grid'">
+							<li class="mui-table-view-cell mui-media mui-col-xs-6" v-for="(good,index) in goods">
+								<a class="item" @tap="open_goods_details(good)">
+									<img class="mui-media-object" :src="good.imgSrc" />
+									<div class="mui-content-padded">
+										<span class="mui-media-body mui-ellipsis-2">
+											<img v-if="good.type==1" src="../../images/taobao.png" />
+											<img v-if="good.type==2" src="../../images/bg_label_jd.png" />
+											<img v-if="good.type==3" src="../../images/bg_label_tm.png" />
+											{{good.title}}
+										</span>
+										<div class="discount">
+											<span v-if="good.couponAmt==''">券 0</span>
+											<span v-if="good.couponAmt!=''">券 {{good.couponAmt}}</span>
+											<span v-text="'返 '+good.commission"></span>
+										</div>
+										<p>¥<b>{{good.salePrice-good.couponAmt|tradeOffs}}</b><i>￥{{good.salePrice}}</i>
+											<span>月售 {{good.monthlySale}}</span>
+										</p>
+									</div>
+								</a>
+							</li>
+						</ul>
+						<ul class="mui-table-view list" v-if="layout == 'list'">
+							<li class="mui-table-view-cell mui-media" v-for="(good,index) in goods">
+								<a href="javascript:;" @tap="open_goods_details(good)">
+									<img class="mui-media-object mui-pull-left" :src="good.imgSrc">
+									<div class="mui-media-body mui-ellipsis-2">
+										<img v-if="good.type==1" src="../../images/taobao.png" />
+										<img v-if="good.type==2" src="../../images/bg_label_jd.png" />
+										<img v-if="good.type==3" src="../../images/bg_label_tm.png" />
+										{{good.title}}
+									</div>
+									<div class="discount">
+										<span v-if="good.couponAmt==''">券 0</span>
+										<span v-if="good.couponAmt!=''">券 {{good.couponAmt}}</span>
+										<i>返 {{good.commission}}</i>
+									</div>
+									<p>
+										<span class="mui-pull-left"></span>¥<b>{{good.salePrice-good.couponAmt|tradeOffs}}</b>
+										<i v-if="good.type==1">淘宝价：{{good.salePrice}}</i>
+										<i v-if="good.type==2">京东价：{{good.salePrice}}</i>
+										<i v-if="good.type==3">天猫价：{{good.salePrice}}</i>
+										<span class="mui-pull-right">月售 {{good.monthlySale}}</span>
+									</p>
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<script src="../../js/mui.min.js"></script>
+		<script src="j../../s/mui.lazyload.js"></script>
+		<script src="../../js/api.js"></script>
+		<script src="../../js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../js/constant.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init({
+				swipeBack: false, //启用右滑关闭功能
+				pullRefresh: {
+					container: '#pullrefresh',
+					down: {
+						style: 'circle', //必选，下拉刷新样式，目前支持原生5+ ‘circle’ 样式
+						color: '#2BD009', //可选，默认“#2BD009” 下拉刷新控件颜色
+						height: '50px', //可选,默认50px.下拉刷新控件的高度,
+						range: '100px', //可选 默认100px,控件可下拉拖拽的范围
+						offset: '0px', //可选 默认0px,下拉刷新控件的起始位置
+						auto: false, //可选,默认false.首次加载自动上拉刷新一次
+						callback: pulldownRefresh
+					},
+					up: {
+						height: 10,
+						contentinit: '正在加载中...',
+						contentrefresh: '正在加载中...',
+						contentnomore: '--  我是有底线的   --',
+						callback: pullupRefresh
+					}
+				}
+			});
+
+			function tabTm() {
+				goodsListPage.isTm == 0 ? goodsListPage.isTm = 1 : goodsListPage.isTm = 0;
+				if(goodsListPage.isTm == 1){
+					mui('.tm-one')[0].classList.add("red")
+					mui('.tm-two')[0].classList.remove("red")
+				}else{
+					mui('.tm-one')[0].classList.remove("red")
+					mui('.tm-two')[0].classList.add("red")
+				}
+			}
+			function tabSend() {
+				goodsListPage.isSend == 0 ? goodsListPage.isSend = 1 : goodsListPage.isSend = 0;
+				if(goodsListPage.isSend == 1){
+					mui('.send-one')[0].classList.add("red")
+					mui('.send-two')[0].classList.remove("red")
+				}else{
+					mui('.send-one')[0].classList.remove("red")
+					mui('.send-two')[0].classList.add("red")
+				}
+			}
+			mui('body').on('tap', '.active', function() {
+				mui('#picture').popover('toggle');
+			})
+			mui('body').on('tap', '.btn-success', function() {
+				mui('#picture').popover('toggle');
+			})
+			
+			
+
+			var goodsListPage = new Vue({
+				el: '#content',
+				data: {
+					layout: 'grid',
+					goods: [],
+					isTm: 0,
+					isSend: 0
+				}
+			})
+			var keyword = '';
+			var pageNumber = 1;
+			var sortType = '';
+			var sort = '';
+
+
+
+			mui.plusReady(function() {
+				userId = plus.storage.getItem(sign_user_id);
+				var self = plus.webview.currentWebview();
+				keyword = self.keyword;
+
+				document.getElementById("titleText").innerText = keyword;
+
+				ajaxRequestGoods(keyword, userId, 1, sortType, sort);
+				/***
+				 * 去掉边框
+				 */
+				plus.webview.currentWebview().setStyle({
+					scrollIndicator: 'none'
+				});
+
+
+				/**
+				 * 
+				 * 监听后台返回前台页面事件
+				 */
+				document.addEventListener("resume", function() {
+					var copyText = copyToClip();
+					if (copyText != '') {
+
+						if (copyText.indexOf('https://item.taobao.com/item.htm?id=') != -1 || copyText.indexOf('https://m.tb.cn/') !=
+							-1 || copyText.indexOf('https://item.taobao.com/item.htm?id=') != -1) {
+							var userId = plus.storage.getItem(sign_user_id);
+							if (userId == null || userId == '') {
+								mui.openWindow({
+									id: 'view/login/login.html',
+									url: '/view/login/login.html',
+									show: {
+										aniShow: 'slide-in-right'
+									},
+									waiting: {
+										autoShow: false //自动显示等待框，默认为true
+									}
+								})
+								return;
+							}
+							mui.post(httpUrl, {
+								method: 'goods00014',
+								module: goodApi,
+								requestId: requestId,
+								sign: signMd5,
+								timeStamp: timeStamp,
+								keyword: copyText,
+								uid: userId
+							}, function(data) {
+								if (data.respCode == '0000') {
+									addToStorage(data.result.title);
+									mui.confirm(data.result.title, '<img src="' + data.result.imgSrc + '" style="width:100%;height:100%;"/>',
+										['取消', '立即搜索'],
+										function(e) {
+											if (e.index == 1) {
+
+												var titleNView = {
+													backgroundColor: '#f7f7f7', //导航栏背景色  
+													titleText: data.result.title, //导航栏标题  
+													titleColor: '#000000', //文字颜色  
+													type: 'transparent', //透明渐变样式  
+													autoBackButton: true, //自动绘制返回箭头  
+													splitLine: { //底部分割线  
+														color: '#cccccc'
+													}
+												}
+
+												mui.openWindow({
+													id: 'view/goods/details/goodsDetails.html',
+													url: '/view/goods/details/goodsDetails.html',
+													extras: {
+														keyword: data.result.thirdId,
+														goods: data.result,
+														goodsList: null
+													},
+													show: {
+														aniShow: 'slide-in-right'
+													},
+													waiting: {
+														autoShow: false //自动显示等待框，默认为true
+													},
+													styles: {
+														titleNView: titleNView,
+														popGesture: 'none'
+													}
+												})
+											}
+										}, 'div')
+									return;
+								}
+								copyText = copyText.substr(1, copyText.lastIndexOf("】") - 1);
+								mui.confirm(copyText, '<img src="../../images/zhinengsearch.png" style="width:100%;height:100%;"/>', [
+									'取消', '立即搜索'
+								], function(e) {
+									if (e.index == 1) {
+										addToStorage(copyText);
+										var targetSearch = plus.webview.getWebviewById("view/goods/goodsSearch.html");
+										mui.fire(targetSearch, "refreshSearch", {
+											content: "刷新搜索",
+											kerword: copyText
+										});
+									}
+								}, 'div')
+							}, 'json');
+
+
+							return;
+						}
+
+						mui.confirm(copyText, '<img src="../../images/zhinengsearch.png" style="width:100%;height:100%;"/>', ['取消',
+							'立即搜索'
+						], function(e) {
+							if (e.index == 1) {
+								addToStorage(copyText);
+								var targetSearch = plus.webview.getWebviewById("view/goods/goodsSearch.html");
+								mui.fire(targetSearch, "refreshSearch", {
+									content: "刷新搜索",
+									kerword: copyText
+								});
+							}
+						}, 'div')
+					}
+				}, false);
+
+
+
+
+			})
+
+			/**
+			 * 监听页面刷新
+			 */
+			window.addEventListener('refreshSearch', function(e) { //执行刷新
+				document.getElementById("titleText").innerText = e.detail.kerword;
+				var userId = plus.storage.getItem(sign_user_id);
+				keyword = e.detail.kerword;
+				ajaxRequestGoods(e.detail.kerword, userId, '1', '', '')
+			})
+
+
+			var titleNView = {
+				backgroundColor: '#f7f7f7', //导航栏背景色  
+				titleText: '', //导航栏标题  
+				titleColor: '#000000', //文字颜色  
+				type: 'transparent', //透明渐变样式  
+				autoBackButton: true, //自动绘制返回箭头  
+				splitLine: { //底部分割线  
+					color: '#cccccc'
+				}
+			}
+
+			function open_goods_details(item) {
+
+				titleNView.titleText = item.title;
+				mui.openWindow({
+					id: '/view/goods/details/goodsDetails.html',
+					url: '/view/goods/details/goodsDetails.html',
+					extras: {
+						goods: item,
+						goodsList: goodsListPage.goods
+					},
+					show: {
+						aniShow: 'slide-in-right'
+					},
+					waiting: {
+						autoShow: false //自动显示等待框，默认为true
+					},
+					styles: {
+						titleNView: titleNView,
+						popGesture: 'none'
+					}
+				})
+
+
+			}
+
+
+			/***
+			 * 下拉
+			 */
+			function pulldownRefresh() {
+				ajaxRequestGoods(keyword, userId, 1, sortType, sort);
+				mui('#pullrefresh').pullRefresh().endPulldown();
+
+			}
+
+			/***
+			 * 上拉刷新
+			 */
+			function pullupRefresh() {
+				/***
+				 * 判断是否为最后一页，如果是最后一页就停止请求
+				 */
+				pageNumber = pageNumber + 1;
+
+				var userId = plus.storage.getItem(sign_user_id);
+
+				var that = this;
+
+				var data = {
+					method: 'goods00011',
+					module: goodApi,
+					requestId: requestId,
+					sign: signMd5,
+					timeStamp: timeStamp,
+					keyword: keyword,
+					pageNo: pageNumber,
+					pageSize: '20',
+					uid: userId,
+					sortType: sortType,
+					sort: sort
+				}
+				mui.getJSON(httpUrl, data, function(res) {
+					if (res.respCode == '0000') {
+						goodsListPage.goods = goodsListPage.goods.concat(res.result);
+						that.endPullupToRefresh(false);
+					}
+				});
+
+
+			}
+
+
+
+			/***
+			 * 
+			 * @param {Object} seachType   搜索类型
+			 * @param {Object} value	      类型值
+			 * @param {Object} uid		       用户id
+			 * @param {Object} pageNumber  页码
+			 * @param {Object} hasCoupon   
+			 * @param {Object} isTmall
+			 */
+			function ajaxRequestGoods(value, uid, pageNumber, sortType, sort) {
+				var data = {
+					method: 'goods00011',
+					module: goodApi,
+					requestId: requestId,
+					sign: signMd5,
+					timeStamp: timeStamp,
+					keyword: value,
+					pageNo: pageNumber,
+					pageSize: '20',
+					uid: uid,
+					sortType: sortType,
+					sort: sort
+				}
+				mui.getJSON(httpUrl, data, function(res) {
+					if (res.respCode == '0000') {
+						if (pageNumber == 1) {
+							goodsListPage.goods = [];
+							goodsListPage.goods = res.result;
+						} else {
+							goodsListPage.goods = goodsListPage.goods.concat(res.result);
+						}
+					}
+				});
+
+			}
+
+
+
+
+			/**
+			 * 从剪切板获取内容
+			 */
+			function copyToClip() {
+				var copyText = '';
+				if (plus.os.name == 'Android') {
+					var Context = plus.android.importClass("android.content.Context");
+					var main = plus.android.runtimeMainActivity();
+					var clip = main.getSystemService(Context.CLIPBOARD_SERVICE);
+					//获取剪切板
+					copyText = plus.android.invoke(clip, "getText");
+
+
+					if (typeof(copyText) != 'undefined' && copyText != '' && copyText != null) {
+						if (copyText.indexOf('https://item.taobao.com/item.htm?id=') != -1) {
+							plus.android.invoke(clip, "setText", "");
+						} else if (copyText.length > 5) {
+
+							if (/.*[\u4e00-\u9fa5]+.*$/.test(copyText)) {
+								plus.android.invoke(clip, "setText", "");
+							} else {
+								copyText = '';
+							}
+
+						} else {
+
+							copyText = '';
+
+						}
+
+					} else {
+						copyText = '';
+					}
+					//清空剪切板
+				} else {
+					var UIPasteboard = plus.ios.importClass("UIPasteboard");
+					var generalPasteboard = UIPasteboard.generalPasteboard();
+					//获取剪切板
+					copyText = generalPasteboard.plusCallMethod({
+						valueForPasteboardType: "public.utf8-plain-text"
+					});
+
+					if (typeof(copyText) != 'undefined' && copyText != '' && copyText != null) {
+						if (copyText.indexOf('https://item.taobao.com/item.htm?id=') != -1) {
+							//清空剪切板
+							generalPasteboard.plusCallMethod({
+								setValue: '',
+								forPasteboardType: "public.utf8-plain-text"
+							});
+						} else if (copyText.length > 5) {
+
+							if (/.*[\u4e00-\u9fa5]+.*$/.test(copyText)) {
+								//清空剪切板
+								generalPasteboard.plusCallMethod({
+									setValue: '',
+									forPasteboardType: "public.utf8-plain-text"
+								});
+							} else {
+								copyText = '';
+							}
+						} else {
+							copyText = '';
+						}
+					} else {
+						copyText = '';
+					}
+
+				}
+				return copyText;
+			}
+		</script>
+
+
+
+	</body>
+
+</html>

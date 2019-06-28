@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../../css/self/orderInquiry.css"/>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">订单查询</h1>
+		</header>
+		<div class="mui-content">
+			<div class="mui-card">
+				<div class="mui-card-header mui-text-center">
+					<img src="../../../images/success.png" style="margin-top: 40px;width: 40px;height: 40px;"/>
+					<p>订单已经存在</p>
+				</div>				
+			</div>
+			<div class="mui-content-padded">
+				<button type="button" id="queryOrder" class="mui-btn mui-btn-blue mui-btn-block">查看订单</button>
+			</div>
+			
+		</div>	
+		<script src="../../../js/mui.min.js"></script>
+		<script src="../../../js/rem.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init();
+			
+			document.getElementById("queryOrder").addEventListener("tap",function(){
+				mui.openWindow({
+					id:'/view/self/myOrder/myOrder.html',
+					url:'/view/self/myOrder/myOrder.html',
+					show:{
+						aniShow:'slide-in-right'
+					},
+		            waiting: {
+		                 autoShow: false //自动显示等待框，默认为true
+		            }
+				})
+				
+			})
+		</script>
+	</body>
+
+</html>

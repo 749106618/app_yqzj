@@ -1,0 +1,273 @@
+
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../../css/mui.min.css">
+		<link rel="stylesheet" type="text/css" href="../../../css/all.css"/>
+		<link rel="stylesheet" type="text/css" href="../../../css/goods/goodsShare.css"/>
+		<!--App自定义的css-->
+		<style type="text/css">
+			#images .mui-col-sm-6.mui-col-xs-6.mui-radio img{height: 6.2rem;}
+			#content,body{background-color: #FFFFFF;}
+			
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">分享</h1>
+		</header>
+		<div class="mui-content" id="content" v-cloak>
+			<span>奖励收益预估：¥{{goods.commission}}</span>
+			<div class="mui-content-padded">				
+				<h4>{{circle.title}}</h4>
+				<div class="mui-content-padded">
+					<p v-if="goods.type==1">【淘宝原价】{{circle.price}}元</p>
+					<p v-if="goods.type==2">【京东原价】{{circle.price}}元</p>
+					<p v-if="goods.type==3">【天猫原价】{{circle.price}}元</p>
+					<p>【销售价】{{circle.salePrice}}元</p>
+					<p>【用有券之家再省】{{circle.couponAmt}}元</p>
+					<p>【卷后价】{{circle.salePrice-circle.couponAmt|tradeOffs}}元</p>
+					<p>【淘宝口令】{{circle.token}}</p>
+					<p>==================</p>
+					<p><a id="openTaobao" :href="thirdUrl">进入【淘宝】即可抢购</a></p>
+				</div>	
+				<ul class="mui-table-view" >
+					<li class="mui-table-view-cell mui-collapse mui-active">
+						<a class="mui-navigate-right" href="#">宝贝详情</a>
+						<div class="mui-collapse-content" style="padding: 0;">
+							<div class="mui-row" id="images">
+								<div class="mui-col-sm-6 mui-col-xs-6 mui-radio" >
+									<img :src="circle.shareUrl" width="100%" style="padding: 5px;" data-preview-src="" data-preview-group="1"/>
+									<input name="radio1" type="radio" class="mui-pull-right mui-table-view-radio" checked>
+								</div>
+								<div class="mui-col-xs-6 mui-radio">
+									<div class="mui-col-sm-6 mui-col-xs-6 fl" v-for="img in imgs" >
+										<img :src="img" width="100%" height="100" style="padding: 5px 1px;" data-preview-src="" data-preview-group="1"/>
+									</div>
+								</div>
+							</div>
+						</div>	
+					</li>
+				</ul>
+				
+				<nav class="mui-bar mui-bar-tab">
+				    <a class="mui-tab-item mui-active">
+				    	<div class="mui-content-padded">
+				    		  <button type="button" @tap="copyLink()" class="mui-btn mui-btn-warning mui-btn-block">复制淘口令</button>
+				    	</div>
+				     
+				    </a>
+				    <a class="mui-tab-item">
+				    	<div class="mui-content-padded">
+				    		<button type="button" id="share" class="mui-btn mui-btn-danger mui-btn-block">分享图片</button>
+				    	</div>
+				        
+				    </a>
+				</nav>		
+			</div>
+		</div>
+	</body>
+	<script src="../../../js/rem.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../../js/mui.min.js"></script>
+	<script src="../../../js/api.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../../js/mui.zoom.js"></script>
+	<script src="../../../js/mui.previewimage.js"></script>
+	<script src="../../../js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../../js/constant.js" type="text/javascript" charset="utf-8"></script>
+	<script>
+		mui.init({swipeBack: false})
+		
+		var vm = new Vue({
+			el:'#content',
+			data:{
+				goods:{},
+				imgs:[],
+				circle:{},
+				thirdUrl:''
+			},
+			filters:{
+				tradeOffs:function(value){
+					value = value.toFixed(2);
+					return parseFloat(value);
+				}
+			}
+		})
+		
+		
+		
+		var shares = {};
+		
+		mui.plusReady(function(){
+			var self = plus.webview.currentWebview();
+			var goods = self.good;
+			vm.goods = goods;
+			vm.thirdUrl = self.thirdUrl;
+			
+			vm.imgs = goods.smallImg.split(",");
+			
+			qrcode_img();
+				    
+	    	
+	    	
+	    	plus.share.getServices(function(s) {
+				if (s && s.length > 0) {
+					for (var i = 0; i < s.length; i++) {
+						var t = s[i];
+						shares[t.id] = t;
+					}
+				}
+			}, function() {
+				console.log("获取分享服务列表失败");
+			});
+		})
+		
+		
+		function qrcode_img(){
+			var userId = plus.storage.getItem(sign_user_id);
+			mui.post(httpUrl,{
+					method:'circle00002',
+					module:goodApi,
+					requestId:requestId,
+					sign:signMd5,
+					timeStamp:timeStamp,
+					uid:userId,
+					gid:vm.goods.thirdId
+				},function(res){
+					if(res.respCode=='0000'){
+						vm.circle = res.result;
+						mui.previewImage();
+					}
+				},'json'
+			);
+		}
+		
+		
+		
+		//分享链接点击事件
+		document.getElementById("share").addEventListener('tap', function() {
+			var ids = [{
+					id: "weixin",
+					ex: "WXSceneSession"
+				}, {
+					id: "weixin",
+					ex: "WXSceneTimeline"
+				}],
+				bts = [{
+					title: "发送给微信好友"
+				}, {
+					title: "分享到微信朋友圈"
+				}];
+			plus.nativeUI.actionSheet({
+				cancel: "取消",
+				buttons: bts
+			}, function(e) {
+				var i = e.index;
+				if (i > 0) {
+					var s_id = ids[i - 1].id;
+					var share = shares[s_id];
+					if (share) {
+						if (share.authenticated) {
+							shareMessage(share, ids[i - 1].ex);
+						} else {
+							share.authorize(function() {
+								shareMessage(share, ids[i - 1].ex);
+							}, function(e) {
+								console.log("认证授权失败：" + e.code + " - " + e.message);
+							});
+						}
+					} else {
+						mui.toast("无法获取分享服务，请检查manifest.json中分享插件参数配置，并重新打包")
+					}
+				}
+			});
+		});
+		
+		
+		function shareMessage(share, ex) {
+			var msg = {
+				content: "海报分享",
+					pictures: [],
+				extra: {
+					scene: ex
+				}
+			};
+			msg.pictures.push(vm.circle.shareUrl);
+			
+			share.send(msg, function() {
+				mui.toast(share.description + "成功！");
+				//console.log("分享到\"" + share.description + "\"成功！ ");
+			}, function(e) {
+				mui.toast(share.description + "失败！"+ e.code + " - " + e.message);
+				//console.log("分享到\"" + share.description + "\"失败: " + e.code + " - " + e.message);
+			});
+			
+		}
+		
+		
+		
+		/*复制*/
+		function copyLink(){	
+			copyShareUrl(vm.circle.token);
+		}
+		
+		
+		
+		document.getElementById("openTaobao").addEventListener("tap",function(){
+				var href = this.getAttribute("href");
+				console.log(href)
+					//获取本地存储用户id
+				var uid = plus.storage.getItem(sign_user_id);
+				
+				//发送ajax请求
+				mui.post(httpUrl,{
+						method:'user00010',
+						module:userApi,
+						requestId:requestId,
+						sign:signMd5,
+						timeStamp:timeStamp,
+						uid:uid
+					},function(res){
+						if(res.respCode=='0000'){
+							var isAouth = res.result.isAouth;
+							
+							if(isAouth==0||isAouth+''=='0'||isAouth==''||isAouth==null){
+								plus.runtime.openURL(aliyunUrl+uid);
+								return;
+							}
+							
+							mui.openWindow({
+								url:'/view/inclued/openPage.html',
+								id: '/view/inclued/openPage.html',
+								show:{
+									aniShow:'slide-in-right'
+								},
+					            waiting: {
+					                 autoShow: false //自动显示等待框，默认为true
+					            },
+					            extras:{
+						           		url:href,
+						           		title:'领取优惠券'
+						        }
+							})
+							
+							
+						}
+					},'json'
+				);
+				
+				
+			
+			})
+		
+		
+		
+	</script>
+
+</html>

@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+		<link href="css/mui.min.css" rel="stylesheet" /
+		<script src="js/rem.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+
+	<body>
+		
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init({swipeBack:false});
+			
+			mui.plusReady(function(){
+				//plus.navigator.setStatusBarBackground('#ffffff');
+				plus.navigator.setStatusBarStyle("dark");
+				//console.log("当前页面URL："+plus.webview.currentWebview().getURL());
+				//仅支持竖屏显示，根据本地存储判断用户是否为首次加载
+				plus.screen.lockOrientation("portrait-primary");
+				
+				//读取本地存储，检查是否为首次启动
+				var showGuide = plus.storage.getItem("lauchFlag");
+				if(showGuide) {
+					plus.navigator.closeSplashscreen();
+					plus.navigator.setFullscreen(false);
+					mui.openWindow({
+						id:'main.html',
+						url:'main.html',
+						show:{
+							aniShow:'none'
+						},
+			            waiting: {
+			                 autoShow: false //自动显示等待框，默认为true
+			            },
+			             styles:{  
+					        popGesture: 'none'
+					    } 
+					})
+					
+				} else{
+					//显示启动导航
+					mui.openWindow({
+						id: 'guide',
+						url: 'guide.html',
+						show:{
+							aniShow:'none'
+						},
+						waiting: {
+			                 autoShow: false, //自动显示等待框，默认为true
+			           },
+			             styles:{  
+					        popGesture: 'none'
+					    } 
+						
+					});
+				}
+				
+				mui.back = function(event) {
+					if(clickNum <= 1) {
+						mui.toast("再按一次退出应用");
+					} else {
+						plus.runtime.quit();
+					}
+					clickNum++;
+					setTimeout(function() {
+						clickNum = 0
+					}, 2000);
+					return false;
+				}
+				
+				
+			})
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../css/style.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../css/login.css"/>
+		<link rel="stylesheet" type="text/css" href="../../iconfont/iconfont.css"/>
+		<style type="text/css">
+			.iconfont{font-size: 0.55rem;margin-right: 10px;color: #cccccc;margin-left: 15px;}
+		</style>
+	</head>
+
+	<body>		
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">验证码登录</h1>
+		</header>
+		<div class="mui-content">		
+			<form id='login-form' class="mui-input-group">
+				<div class="mui-content-padded">
+					<div class="fieldset">
+						<p><img src="../../images/login/logo.png"/ width="100px"></p>
+						
+						<div class="mui-input-row">
+							<label><span class="mui-icon iconfont icon-shouji"></span></label>
+							<input id="phone" type="tel" maxlength="11" class="mui-input-clear mui-input" placeholder="请输入您的手机号码">
+						</div>
+						
+						<div class="mui-input-row">
+							<label><span class="mui-icon iconfont icon-mima54"></span></label>
+							<input id="invitationCode" type="number" class="mui-input-clear mui-input" placeholder="请输入您的验证码">
+							<button type="button" class="mui-btn mui-btn-outlined" id="smsCodeFun">
+								<span id="text">获取短信</span>
+							</button>
+						</div>
+						
+						<div class="link-area">
+							<a id='regist' class="mui-pull-left">注册</a>
+							<a id='passwordLogin' class="mui-pull-right">密码登录</a>
+						</div>
+						
+						<button id='login' type="button" data-loading-text="登录中" class="mui-btn mui-btn-block mui-btn-primary">登录</button>				
+					</div>
+				</div>
+			</form>
+			
+		</div>
+		 <script  src="../../js/rem.js"></script>  
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/api.js" type="text/javascript" charset="utf-8"></script>
+		<script>
+			mui.init({swipeBack: false});
+			
+			mui.plusReady(function(){
+				/**
+				 * 监听登录或者注册成功返回
+				 */
+				window.addEventListener('loginSuccess', function(e){//执行刷新
+					mui.back();
+					//返回true,继续页面关闭逻辑
+					return true;
+	            });
+			})
+
+	      document.getElementById("smsCodeFun").addEventListener("tap",function(){
+	           var phone = document.getElementById("phone").value;
+	           if(phone==''||phone.length<11){
+	           		mui.toast("请输入正确的手机号码！");
+	           		return;
+	           }
+	           if(!(/^1[3456789]\d{9}$/.test(phone))){ 
+			       mui.toast("手机号码有误，请重填");  
+			        return ; 
+			    } 
+	          	/***
+				 * 获取手机短信验证码
+				 */
+				mui.post(httpUrl,{
+					   method:'system00001',
+	                   module:userApi,
+	                   requestId:requestId,
+					   sign:signMd5,
+					   timeStamp:timeStamp,
+	                   type:"5",
+	                   orgId:'',
+	                   phone:phone
+					},function(data){
+						if(data.respCode=='0000'){
+							mui.toast(data.respMsg);
+							setTimeSms();
+							return;
+						}
+						mui.toast(data.respMsg);
+						
+					},'json'
+				);
+	           
+	      })
+	       
+	       
+	        var countdown=60;
+	        function setTimeSms() {
+	            var text = document.getElementById("text");
+	            if (countdown == 0) {
+	                //text.removeAttribute("disabled");
+	                text.innerHTML = "获取短信";
+	                countdown = 60;
+	            } else {
+	                //text.setAttribute("disabled", true);
+	                text.innerHTML = "重新发送(" + countdown + ")";
+	                countdown--;
+	                setTimeout(function () {
+	                    setTimeSms();
+	                }, 1000)
+	            }
+	        }
+	       
+	       
+	       document.getElementById("login").addEventListener("tap",function(){
+	       		var smsCode = document.getElementById("invitationCode").value;
+	       		
+	       		if(phone==''||phone.length<11){
+	           		mui.toast("请先获取验证码！");
+	           		return;
+	           }
+	       		if(smsCode==''){
+	       			mui.toast("请输入验证码！");
+	       			return ;
+	       		}
+	       		var tel = document.getElementById("phone").value;
+	       		mui(this).button('loading');
+			    setTimeout(function() {
+			        mui(this).button('reset');
+			    }.bind(this), 2000);
+	       		
+	       		/***
+				 * 用户登录
+				 */
+				mui.post(httpUrl,{
+					   method:'user00009',
+	                   module:userApi,
+	                   requestId:requestId,
+					   sign:signMd5,
+					   timeStamp:timeStamp,
+	                   smsCode:smsCode,
+	                   phone:tel
+					},function(data){
+						if(data.respCode=='0000'){
+							var targetHome = plus.webview.getWebviewById("view/home/home.html");
+							mui.fire(targetHome, "refreshHome", {content:"刷新首页"});
+							
+							var targetUser = plus.webview.getWebviewById("view/self/self.html");
+							mui.fire(targetUser, "refreshUser", {content:"刷新个人中心"});
+							
+							var targetCategory = plus.webview.getWebviewById("view/category/category.html");
+							mui.fire(targetCategory, "refreshCatgory", {content:"刷新分类"});
+							
+							var targetSearch = plus.webview.getWebviewById("view/search/search.html");
+							mui.fire(targetSearch, "refreshSearch", {content:"刷新搜索"});
+							
+							var targetHome = plus.webview.getWebviewById("login.html");
+							mui.fire(targetHome, "loginSuccess", {content:"验证码登录成功"});
+							
+							var refreshRedPck = plus.webview.getWebviewById("view/self/welfare/redpack.html");
+							mui.fire(refreshRedPck, "refreshRedPck", {content:"刷新红包页"});
+							
+							plus.storage.setItem(sign_user_id,data.result.id);
+							mui.back();
+							return;
+						}
+						mui.toast(data.respMsg);
+						
+					},'json'
+				);
+	           
+	       })
+	       
+	         document.getElementById("passwordLogin").addEventListener("tap",function(){
+	       		mui.openWindow({
+	       			id:'login.html',
+	       			url:'login.html',
+	        		show:{
+						aniShow:'slide-in-right'
+					},
+		            waiting: {
+		                 autoShow: false //自动显示等待框，默认为true
+		            }
+	       		})
+	       })
+      
+       document.getElementById("regist").addEventListener("tap",function(){
+	       		mui.openWindow({
+	       			id:'view/login/regist.html',
+	       			url:'regist.html',
+	       			show:{
+						aniShow:'slide-in-right'
+					},
+		            waiting: {
+		                 autoShow: false //自动显示等待框，默认为true
+		            }
+	       		})
+	       })
+      
+	</script>
+
+	</body>
+
+</html>

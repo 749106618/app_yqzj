@@ -1,0 +1,118 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<script src="js/rem.js" type="text/javascript" charset="utf-8"></script>
+		<style type="text/css">
+			body{
+				padding-top: constant(safe-area-inset-top);
+			}
+           #slider{top: constant(safe-area-inset-top);}
+		</style>
+	</head>
+
+	<body>
+		
+		
+		<div id="slider" class="mui-slider" >
+		  <div class="mui-slider-group mui-slider-loop">
+		    <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+		    <div class="mui-slider-item mui-slider-item-duplicate">
+		      <a href="#">
+		        <img src="images/load/guide_three.png">
+		      </a>
+		    </div>
+		    <!-- 第一张 -->
+		    <div class="mui-slider-item">
+		      <a href="#">
+		        <img src="images/load/guide_one.png">
+		      </a>
+		    </div>
+		    <!-- 第二张 -->
+		    <div class="mui-slider-item">
+		      <a href="#">
+		        <img src="images/load/guide_two.png">
+		      </a>
+		    </div>
+		     <!-- 第三张 -->
+		    <div class="mui-slider-item" >
+		      <a href="#" id="startUp">
+		        <img src="images/load/guide_three.png">
+		      </a>
+		    </div>
+		    <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+		    <div class="mui-slider-item ">
+		      <a href="#">
+		         <img src="images/load/guide_one.png">
+		      </a>
+		    </div>
+		  </div>
+		</div>
+		
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript">
+			
+			
+			mui.init({swipeBack:false});
+			mui.back = function(event) {
+				if(clickNum <= 1) {
+					mui.toast("再按一次退出应用");
+				} else {
+					plus.runtime.quit();
+				}
+				clickNum++;
+				setTimeout(function() {
+					clickNum = 0
+				}, 2000);
+				return false;
+			}
+				
+			mui.plusReady(function() {
+				
+				var imgs = document.querySelectorAll("img");
+			
+				var winWidth = document.documentElement.clientWidth; 
+				var winHength =  document.documentElement.clientHeight;
+				
+				for(var i=0;i<imgs.length;i++){
+					imgs[i].style.height = winHength+"px";
+					imgs[i].style.width = winWidth+"px";
+				}
+				
+				if(mui.os.ios){
+					plus.navigator.setFullscreen(true);
+				}
+				
+				
+				plus.navigator.closeSplashscreen();
+				
+				document.getElementById("startUp").addEventListener('tap', function(event) {
+					plus.storage.setItem("lauchFlag", "true");
+					
+					mui.openWindow({
+						url: "main.html",
+						id: "main.html",
+						waiting: {
+			                 autoShow: false, //自动显示等待框，默认为true
+			            },
+						show:{
+							aniShow:'none'
+						},
+			             styles:{  
+					        popGesture: 'none'
+					    } 
+					});
+
+				});
+			});
+				
+				
+			
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,197 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../../css/all.css" rel="stylesheet">
+	    <link rel="stylesheet" type="text/css" href="../../../css/base.css"/>
+	    <link rel="stylesheet" type="text/css" href="../../../css/style.css"/>
+	      <style type="text/css">			
+			.mui-content>.mui-table-view:first-child{margin-top: 0;}
+			.mui-content{background: #FFFFFF;}
+			.goodimg{width: 13px; height: 13px;}
+			.mui-table-view .mui-media-object{max-width: 2.5rem;height: 2.5rem;}
+		</style>
+	</head>
+
+	<body>
+		
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">我的收藏</h1>
+		</header>
+		
+		<div class="mui-content" id="centent">
+			 <div v-if="goods!=''" class="home-fashion ">
+			    <ul class="mui-table-view" id="collection">
+			        <li class="mui-table-view-cell mui-media"  v-for="(good,index) in goods" style="padding: 5px 5px;margin: 5px 0 5px;">
+			        	
+			        	<div class="mui-slider-right mui-disabled">
+							<a class="mui-btn mui-btn-success" @tap="open_details(good)">详情</a>
+							<a class="mui-btn mui-btn-red del-btn" :id="good.thirdId">取消</a>
+						</div>
+						<div class="mui-slider-handle">
+							<div class="mui-table-cell">
+						            <img class="mui-media-object mui-pull-left" :src="good.imgSrc" style="width: 3rem;height: 3rem;">
+						            <div class="mui-media-body mui-ellipsis-2" style="font-size: 14px;">
+						            	<img v-if="good.type==1" class="goodimg" src="../../../images/taobao.png"/>
+										<img v-if="good.type==2" class="goodimg" src="../../../images/bg_label_jd.png"/>
+										<img v-if="good.type==3" class="goodimg" src="../../../images/bg_label_tm.png"/>
+					                	{{good.title}}				               
+						            </div>
+						            <div class="discount">
+											<span v-if="good.couponAmt==''">券 0</span>
+											<span v-if="good.couponAmt!=''">券 {{good.couponAmt}}</span>
+											<i>返 {{good.commission}}</i>
+									</div>
+									<p >
+										<i v-if="good.type==1">淘宝价：{{good.price}}</i>
+										<i v-if="good.type==2">京东价：{{good.price}}</i>
+										<i v-if="good.type==3">天猫价：{{good.price}}</i>
+										<span class="mui-pull-right">月售 {{good.monthlySale}}</span>
+									</p>
+							</div>
+						</div>
+			        	
+				    </li>
+			    </ul>
+			</div>
+			<div v-if="something==''">
+	    		<p class="mui-text-center" style="margin-top: 200px;">暂时还未收藏哦</p>
+	    	</div>
+		</div>
+		
+		<script src="../../../js/rem.js"></script>
+		<script src="../../../js/mui.min.js"></script>
+		<script src="../../../js/api.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../../js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init({swipeBack:true});
+			
+			
+			var vm = new Vue({
+				el:'#centent',
+				data:{
+					goods:[],
+					something:'1'
+				}
+			})
+			
+			
+			
+			mui.plusReady(function(){
+				
+				var userId = plus.storage.getItem(sign_user_id);
+				
+				plus.nativeUI.showWaiting("小主，请稍等片刻...",{background:"#c3c3c3",color:"#ffffff"});
+				
+				
+				/**
+				 * 用户收藏
+				 */
+				mui.getJSON(httpUrl,{
+						method:'collection00001',
+						module:goodApi,
+						requestId:requestId,
+						sign:signMd5,
+						timeStamp:timeStamp,
+						uid:userId,
+						type:'1'
+					},function(event){
+						if(event.respCode=='0000'){
+							plus.nativeUI.closeWaiting();
+							if(event.result==null){
+								vm.something='';
+								return;
+							}
+							vm.goods = event.result;
+							vm.something = vm.goods==''?'':'1';
+							setTimeout(function(){
+								mui("#collection").on('tap', '.del-btn', function() {
+									var that = this;
+									var li = that.parentNode.parentNode;
+									var thirdId = that.getAttribute("id");
+									var userId = plus.storage.getItem(sign_user_id);
+									mui.confirm('确认取消这条收藏吗？', '温馨提示', ['确认', '取消'], function(e) {
+										if (e.index == 0) {
+											li.parentNode.removeChild(li);
+											mui.post(httpUrl,{
+													method:'collection00003',
+													module:goodApi,
+													requestId:requestId,
+													sign:signMd5,
+													timeStamp:timeStamp,
+													uid:userId,
+													thirdId:thirdId
+												},function(res){
+													mui.toast(res.respMsg)
+												},'json'
+											);
+										} else {
+											setTimeout(function() {
+												mui.swipeoutClose(li);
+											}, 0);
+										}
+									});
+								});
+							},200)
+							
+							
+						}
+				});
+				
+				
+				//去掉滚动条
+				plus.webview.currentWebview().setStyle({
+					scrollIndicator: 'none'
+				});
+				
+				
+			})
+			
+			var titleNView = {  
+			    backgroundColor: '#f7f7f7',//导航栏背景色  
+			    titleText: '',//导航栏标题  
+			    titleColor: '#000000',//文字颜色  
+			    type:'transparent',//透明渐变样式  
+			    autoBackButton: true,//自动绘制返回箭头  
+			    splitLine:{//底部分割线  
+			        color:'#cccccc'  
+			    }  
+			}  
+			
+			function open_details(item) {
+				
+				titleNView.titleText = item.title;
+				mui.openWindow({
+					id:'view/goods/details/goodsDetails.html',
+					url:'/view/goods/details/goodsDetails.html',
+		   			extras:{
+						goods:item,
+						goodsList:vm.goods
+					},
+					show:{
+						aniShow:'slide-in-right'
+					},
+		            waiting: {
+		                 autoShow: false //自动显示等待框，默认为true
+		            },
+		             styles:{  
+				        titleNView:titleNView,
+				        popGesture: 'none'
+				    } 
+				})
+				
+				
+					
+			}
+			
+			
+			
+		</script>
+	</body>
+
+</html>

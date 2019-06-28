@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../css/style.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/login.css"/>
+		<link rel="stylesheet" type="text/css" href="../../iconfont/iconfont.css"/>
+		<style type="text/css">
+			.iconfont{font-size: 0.55rem;margin-right: 10px;color: #cccccc;margin-left: 15px;}
+		</style>
+	</head>
+
+	<body>		
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">用户登录</h1>
+		</header>
+		<div class="mui-content">		
+			<form id='login-form' class="mui-input-group">
+				<div class="mui-content-padded">
+					<div class="fieldset">
+						<p><img src="../../images/login/logo.png"/ width="100px"></p>
+						<div class="mui-input-row">
+							<label><span class="mui-icon iconfont icon-shouji"></span></label>
+							<input id="phone" type="tel" maxlength="11" class=" mui-input mui-input-clear" placeholder="请输入您的手机号码">
+						</div>
+						
+						<div class="mui-input-row">
+							<label><span class="mui-icon iconfont icon-mima54"></span></label>
+							<input id="password" type="password" class="mui-input mui-input-clear " placeholder="请输入您的密码">
+						</div>
+						
+						<div class="link-area">
+							<a id='regist' class="mui-pull-left">注册</a>
+							<a id='codeLogin' class="mui-pull-right">验证码登录</a>
+						</div>
+						
+						<button id='login' type="button" data-loading-text="登录中" class="mui-btn mui-btn-block mui-btn-primary">登录</button>				
+					</div>
+				</div>
+			</form>
+			
+			
+		</div>
+		<script  src="../../js/rem.js"></script>  
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/api.js" type="text/javascript" charset="utf-8"></script>
+		<script>
+			mui.init({swipeBack: false});
+			
+			
+			mui.plusReady(function(){
+				var self = plus.webview.currentWebview();
+				//var parent = plus.webview.getWebviewById(plus.runtime.appid);
+				var parentPage = "/"+self.opener().id;  //获取请求过来的页面
+				
+				/**
+				 * 监听页面刷新
+				 */
+				window.addEventListener('loginSuccess', function(e){//执行刷新
+					mui.back();
+					//返回true,继续页面关闭逻辑
+					return true;
+	            });
+			
+				
+			})
+			
+			document.getElementById("login").addEventListener("tap",function(){
+	       		
+	       		var phone = document.getElementById("phone").value.trim();
+	       		
+	           if(phone==''||phone.length<11){
+	           		mui.toast("请输入正确的手机号码！");
+	           		return;
+	           }
+	           if(!(/^1[3456789]\d{9}$/.test(phone))){ 
+			       mui.toast("手机号码有误，请重填");  
+			        return ; 
+			   } 
+			   var pwd = document.getElementById("password").value.trim();
+			   if(pwd==''){
+			   		mui.toast("请输入密码！");
+	           		return;
+			   }
+			   mui(this).button('loading');
+			    setTimeout(function() {
+			        mui(this).button('reset');
+			    }.bind(this), 2000);
+	          	/***
+				 * 用户密码登录
+				 */
+				mui.post(httpUrl,{
+					   method:'user00002',
+	                   module:userApi,
+	                   requestId:requestId,
+					   sign:signMd5,
+					   timeStamp:timeStamp,
+	                   phone:phone,
+	                   pwd:pwd
+					},function(data){
+						if(data.respCode=='0000'){
+							plus.storage.setItem(sign_user_id,data.result.id);
+							if(plus.storage.getItem(sign_user_id)!=''){
+								
+								var targetHome = plus.webview.getWebviewById("view/home/home.html");
+								mui.fire(targetHome, "refreshHome", {content:"刷新首页"});
+								
+								var targetUser = plus.webview.getWebviewById("view/self/self.html");
+								mui.fire(targetUser, "refreshUser", {content:"刷新个人中心"});
+								
+								var targetCategory = plus.webview.getWebviewById("view/category/category.html");
+								mui.fire(targetCategory, "refreshCatgory", {content:"刷新分类"});
+								
+								var targetSearch = plus.webview.getWebviewById("view/search/search.html");
+								mui.fire(targetSearch, "refreshSearch", {content:"刷新搜索"});
+								
+								var refreshRedPck = plus.webview.getWebviewById("view/self/welfare/redpack.html");
+								mui.fire(refreshRedPck, "refreshRedPck", {content:"刷新红包页"});
+								
+								mui.toast("登录成功");
+								mui.back();
+							}else{
+								mui.toast("亲，您还没给予我们权限哦，在您的手机设置里信任我们");
+							}
+							
+							//console.log(plus.storage.getItem("userId"));
+							return;
+						}
+						mui.toast(data.respMsg);
+						
+					},'json'
+				);
+	           
+	           
+	       })
+	       
+	       document.getElementById("codeLogin").addEventListener("tap",function(){
+	       		mui.openWindow({
+	       			id:'smsLogin.html',
+	       			url:'smsLogin.html',
+	       			show:{
+						aniShow:'slide-in-right'
+					},
+		            waiting: {
+		                 autoShow: false //自动显示等待框，默认为true
+		            }
+	       		})
+	       })
+	       
+	        document.getElementById("regist").addEventListener("tap",function(){
+	       		mui.openWindow({
+	       			id:'view/login/regist.html',
+	       			url:'regist.html',
+	       			show:{
+						aniShow:'slide-in-right'
+					},
+		            waiting: {
+		                 autoShow: false //自动显示等待框，默认为true
+		            }
+	       		})
+	       })
+	       
+      
+	</script>
+
+	</body>
+
+</html>

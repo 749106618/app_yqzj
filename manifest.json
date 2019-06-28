@@ -1,0 +1,739 @@
+{
+	"@platforms": [
+		"android",
+		"iPhone",
+		"iPad"
+	],
+	"id": "com.wmsj.yqzj",/*应用的标识，创建应用时自动生成，勿手动修改*/
+	"name": "有券之家",/*应用名称，程序桌面图标名称*/
+	"version": {
+		"name": "2.0.5",/*应用版本名称*/
+		"code": "83"
+	},
+	"description": "",/*应用描述信息*/
+	"icons": {
+		"72": "icon.png"
+	},
+	"launch_path": "index.html",/*应用的入口页面，默认为根目录下的index.html；支持网络地址，必须以http://或https://开头*/
+	"developer": {
+		"name": "",/*开发者名称*/
+		"email": "",/*开发者邮箱地址*/
+		"url": "http://www.dcloud.io"
+	},
+	"permissions": {
+		"Cache": {
+			"description": "管理应用缓存"
+		},
+		"Console": {
+			"description": "跟踪调试输出日志"
+		},
+		"Contacts": {
+			"description": "访问系统联系人信息"
+		},
+		"Events": {
+			"description": "应用扩展事件"
+		},
+		"Messaging": {
+			"description": "访问通讯能力"
+		},
+		"Maps": {
+			"description": "管理地图插件"
+		},
+		"Speech": {
+			"description": "管理语音识别插件"
+		},
+		"Storage": {
+			"description": "本地存储，访问本应用需要该权限"
+		},
+		"Uploader": {
+			"description": "文件上传，用户头像上传"
+		},
+		"XMLHttpRequest": {
+			"description": "跨域网络请求"
+		},
+		"File": {
+			"description": "系统文件"
+		},
+		"Camera": {
+			"description": "摄像头"
+		},
+		"Gallery": {
+			"description": "系统相册"
+		},
+		"Barcode": {
+			"description": "二维码扫描"
+		},
+		"Push": {
+			"description": "消息推送"
+		},
+		
+		"Runtime": {
+			"description": "运行环境"
+		},"Share":{
+			"description": "管理消息推送能力"
+		}
+	},
+	"plus": {
+		"statusbar": {
+			"immersed": true    /*设置沉浸式状态栏*/
+		},
+		"splashscreen": {
+			"autoclose": true,/*是否自动关闭程序启动界面，true表示应用加载应用入口页面后自动关闭；false则需调plus.navigator.closeSplashscreen()关闭*/
+			"waiting": false
+		},
+		"safearea": {
+			"background": "#fff",
+			"bottom": {
+				"offset": "auto"
+			}
+		},
+		"popGesture": "hide",
+		"runmode": "liberate",/*应用的首次启动运行模式，可取liberate或normal，liberate模式在第一次启动时将解压应用资源（Android平台File API才可正常访问_www目录）*/
+		"signature": "a0c69b41047ebdd1248936ef45e578a3",/*可选，保留给应用签名，暂不使用*/
+		"distribute": {
+			"plugins": {
+				"share": {"weixin":{
+						 "appid":"wx78736bfd7ac773c3",
+						 "appsecret":"91bd13afc06ffd265c586f2c6b9c763c",
+						 "description":"微信分享"
+					}
+				},
+				"oauth": {},
+				"push": {
+					"igexin": {
+						"appid": "bt8TsuiFib5lPSmSJ7Mk41",
+						"appkey": "aGFSct4oAEADA4wsqmdBb9",
+						"appsecret": "jf5A63KDdb6nqK0ZLyJeo7"
+					}
+				}
+			},
+			"apple": {
+				"appid": "com.wmsj.yqzj",/*iOS应用标识，苹果开发网站申请的appid，如io.dcloud.HelloH5*/
+				"mobileprovision": "",/*iOS应用打包配置文件*/
+				"password": "",/*iOS应用打包个人证书导入密码*/
+				"p12": "",/*iOS应用打包个人证书，打包配置文件关联的个人证书*/
+				"devices": "universal",/*iOS应用支持的设备类型，可取值iphone/ipad/universal*/
+				"UIReserveStatusbarOffset": true,  /*沉浸式状态栏*/
+				"urltypes":[
+			        {
+			            "urlidentifier":"com.wmsj.yqzj",
+			            "urlschemes":[
+			                "yqzj"
+			            ]
+			        }
+			    ],
+				"frameworks": []
+			},
+			"google": {
+				"packagename": "com.wmsj.yqzj",/*Android应用包名，如io.dcloud.HelloH5*/
+				"keystore": "",/*Android应用打包使用的密钥库文件*/
+				"password": "",/*Android应用打包使用密钥库中证书的密码*/
+				"aliasname": "",/*Android应用打包使用密钥库中证书的别名*/
+				"schemes":[
+			        "yqzj"
+			    ],
+				"targetSdkVersion":26,
+				"ImmersedStatusbar": true,  /*沉浸式状态栏*/
+				"permissions": ["<uses-permission android:name=\"android.permission.CHANGE_NETWORK_STATE\"/>","<uses-permission android:name=\"android.permission.MOUNT_UNMOUNT_FILESYSTEMS\"/>","<uses-permission android:name=\"android.permission.READ_CONTACTS\"/>","<uses-permission android:name=\"android.permission.VIBRATE\"/>","<uses-permission android:name=\"android.permission.READ_LOGS\"/>","<uses-permission android:name=\"android.permission.ACCESS_WIFI_STATE\"/>","<uses-feature android:name=\"android.hardware.camera.autofocus\"/>","<uses-permission android:name=\"android.permission.WRITE_CONTACTS\"/>","<uses-permission android:name=\"android.permission.SYSTEM_ALERT_WINDOW\"/>","<uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>","<uses-permission android:name=\"android.permission.RECEIVE_BOOT_COMPLETED\"/>","<uses-permission android:name=\"com.android.launcher.permission.UNINSTALL_SHORTCUT\"/>","<uses-permission android:name=\"android.permission.CAMERA\"/>","<uses-permission android:name=\"android.permission.GET_ACCOUNTS\"/>","<uses-permission android:name=\"android.permission.RECORD_AUDIO\"/>","<uses-permission android:name=\"android.permission.MODIFY_AUDIO_SETTINGS\"/>","<uses-permission android:name=\"com.android.launcher.permission.INSTALL_SHORTCUT\"/>","<uses-permission android:name=\"android.permission.INTERNET\"/>","<uses-permission android:name=\"android.permission.READ_PHONE_STATE\"/>","<uses-permission android:name=\"android.permission.CHANGE_WIFI_STATE\"/>","<uses-permission android:name=\"android.permission.WAKE_LOCK\"/>","<uses-permission android:name=\"android.permission.FLASHLIGHT\"/>","<uses-permission android:name=\"android.permission.CALL_PHONE\"/>","<uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\"/>","<uses-feature android:name=\"android.hardware.camera\"/>","<uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\"/>","<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\"/>","<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>"]
+			},
+			"orientation": [
+				"portrait-primary",
+				"portrait-secondary"
+			],/*应用支持的方向，portrait-primary：竖屏正方向；portrait-secondary：竖屏反方向；landscape-primary：横屏正方向；landscape-secondary：横屏反方向*/
+			"icons": {
+				"ios": {
+					"prerendered": true, /*应用图标是否已经高亮处理，在iOS6及以下设备上有效*/
+					/*应用图标，分辨率：512x512，用于自动生成各种尺寸程序图标*/
+					"iphone": {
+						"normal": "",/*iPhone普通屏幕程序图标，分辨率：57x57*/
+						"retina": "",/*iPhone高分屏程序图标，分辨率：114x114*/
+						/*iPhone iOS7高分屏程序图标，分辨率：120x120*/
+						"spotlight-normal": "", /*iPhone Spotlight搜索程序图标，分辨率：29x29*/
+						"spotlight-retina": "", /*iPhone高分屏Spotlight搜索程序图标，分辨率：58x58*/
+						/*iPhone iOS7高分屏Spotlight搜索程序图标，分辨率：80x80*/
+						"settings-normal": "", /*iPhone设置页面程序图标，分辨率：29x29*/
+						"app@2x": "C:/Users/Administrator/Desktop/有券之家/图标/pingguo/120.png",
+						"app@3x": "C:/Users/Administrator/Desktop/有券之家/图标/pingguo/180.png",
+						"settings@2x": "C:/Users/Administrator/Desktop/有券之家/图标/pingguo/58.png",
+						"settings@3x": "C:/Users/Administrator/Desktop/有券之家/图标/pingguo/87.png",
+						"spotlight@3x": "C:/Users/Administrator/Desktop/有券之家/图标/pingguo/120.png",
+						"spotlight@2x": "C:/Users/Administrator/Desktop/有券之家/图标/pingguo/80.png",
+						"notification@3x": "C:/Users/Administrator/Desktop/有券之家/图标/pingguo/60.png",
+						"notification@2x": "C:/Users/Administrator/Desktop/有券之家/图标/pingguo/40.png"
+					},
+					"ipad": {
+						"normal": "", /*iPad普通屏幕程序图标，分辨率：72x72*/
+						"retina": "", /*iPad高分屏程序图标，分辨率：144x144*/
+						"normal7": "", /*iPad iOS7程序图标，分辨率：76x76*/
+						"retina7": "", /*iPad iOS7高分屏程序图标，分辨率：152x152*/
+						"spotlight-normal": "", /*iPad Spotlight搜索程序图标，分辨率：50x50*/
+						"spotlight-retina": "", /*iPad高分屏Spotlight搜索程序图标，分辨率：100x100*/
+						/*iPad iOS7 Spotlight搜索程序图标，分辨率：40x40*/
+						/*iPad iOS7高分屏Spotlight搜索程序图标，分辨率：80x80*/
+						"settings-normal": "",/*iPad设置页面程序图标，分辨率：29x29*/
+						"spotlight": "",
+						"settings@2x": "",
+						"notification": "",
+						"notification@2x": "",
+						"spotlight@2x": ""
+					},
+					"appstore": "C:/Users/Administrator/Desktop/logo.png"
+				},
+				"android": {
+					"mdpi": "C:/Users/Administrator/Desktop/有券之家/图标/anzhuo/48.png", /*普通屏程序图标，分辨率：48x48*/
+					"ldpi": "C:/Users/Administrator/Desktop/有券之家/图标/anzhuo/48.png", /*大屏程序图标，分辨率：48x48*/
+					"hdpi": "C:/Users/Administrator/Desktop/有券之家/图标/anzhuo/72.png", /*高分屏程序图标，分辨率：72x72*/
+					"xhdpi": "C:/Users/Administrator/Desktop/有券之家/图标/anzhuo/96.png",/*720P高分屏程序图标，分辨率：96x96*/
+					"xxhdpi": "C:/Users/Administrator/Desktop/有券之家/图标/anzhuo/144.png",
+					"xxxhdpi": "C:/Users/Administrator/Desktop/有券之家/图标/anzhuo/192.png"
+				}
+			},
+			"splashscreen": {
+				"ios": {
+					"iphone": {
+						"default": "", /*iPhone3启动图片选，分辨率：320x480*/
+						"retina35": "C:/Users/Administrator/Desktop/苹果/640_960.png",/*3.5英寸设备(iPhone4)启动图片，分辨率：640x960*/
+						"retina40": "C:/Users/Administrator/Desktop/苹果/640_1136.png","iphonex":"C:/Users/Administrator/Desktop/苹果/1125_2436.png","retina47":"C:/Users/Administrator/Desktop/苹果/750_1334.png","retina55":"C:/Users/Administrator/Desktop/苹果/1242_2208.png"
+					},
+					"ipad": {
+						"portrait": "C:/Users/Administrator/Desktop/苹果/768_1004.png", /*iPad竖屏启动图片，分辨率：768x1004*/
+						"portrait-retina": "",/*iPad高分屏竖屏图片，分辨率：1536x2008*/
+						"landscape": "", /*iPad横屏启动图片，分辨率：1024x748*/
+						"landscape-retina": "", /*iPad高分屏横屏启动图片，分辨率：2048x1496*/
+						 /*iPad iOS7竖屏启动图片，分辨率：768x1024*/
+						"portrait-retina7": "",/*iPad iOS7高分屏竖屏图片，分辨率：1536x2048*/
+						"landscape7": "", /*iPad iOS7横屏启动图片，分辨率：1024x768*/
+						"landscape-retina7": ""
+					}
+				},
+				"android": {
+					"mdpi": "", /*普通屏启动图片，分辨率：240x282*/
+					"ldpi": "", /*大屏启动图片，分辨率：320x442*/
+					"hdpi": "C:/Users/Administrator/Desktop/有券之家/安卓启动页1/480_762.png", /*高分屏启动图片，分辨率：480x762*/
+					"xhdpi": "C:/Users/Administrator/Desktop/有券之家/安卓启动页1/720_1242.png", /*720P高分屏启动图片，分辨率：720x1242*/
+					"xxhdpi": "C:/Users/Administrator/Desktop/有券之家/安卓启动页1/1080_1882.png"
+				}
+			},
+			"debug": false
+		}
+	},
+	"dependencies": {
+		"pages": {
+			"index.html": {
+				"resources": [
+					"js/mui.min.js"
+				],
+				"refer": [
+					"guide.html",
+					"main.html"
+				],
+				"priority": 0
+			},
+			"main.html": {
+				"resources": [
+					"view/home/home.html",
+					"view/self/self.html",
+					"view/category/category.html",
+					"view/self/welfare/redpack.html"
+				],
+				"refer": [
+					"view/share/share.html",
+					"view/supermarket/supermarket.html",
+					"guide.html",
+					"view/market/market.html"
+				],
+				"priority": 0
+			},
+			"view/home/home.html": {
+				"resources": [
+					"images/jingxuan.png",
+					"images/home/newVip.gif",
+					"images/jingdong.png",
+					"images/daili.png",
+					"images/pingdd.png",
+					"images/ju.png",
+					"images/xinyongka.png",
+					"images/daikuan.png",
+					"images/9.9.png",
+					"images/baoping.png",
+					"images/taobao.png",
+					"images/update.png",
+					"manifest.json",
+					"fonts/mui.ttf"
+				],
+				"refer": [
+					"view/goods/goodsDetails.html",
+					"view/search/search.html",
+					"view/goods/giscountGoods.html",
+					"view/goods/goodsMore.html",
+					"view/goods/goodsList.html",
+					"view/goods/goodsDiscount.html",
+					"view/goods/details/goodsDetails.html",
+					"view/inclued/credit.html",
+					"view/inclued/loan.html",
+					"view/inclued/openTaobao.html",
+					"view/inclued/openPage.html",
+					"view/login/login.html",
+					"view/goods/goodsSearch.html",
+					"view/goods/details/bannerDetails.html",
+					"view/test.html",
+					"view/goods/details/seacrch_details.html",
+					"view/goods/copy_search.html",
+					"view/goods/more_goods.html",
+					"view/goods/new_free.html",
+					"view/self/welfare/redpack.html",
+					"view/goods/mother_infant.html"
+				],
+				"priority": 0
+			},
+			"guide.html": {
+				"resources": [],
+				"refer": [
+					"main.html"
+				],
+				"priority": 0
+			},
+			"view/category/category.html": {
+				"resources": [],
+				"refer": [
+					"view/goods/goodsList.html",
+					"view/search/search.html",
+					"view/login/login.html",
+					"view/goods/copy_search.html"
+				],
+				"priority": 0
+			},
+			"view/goods/goodsList.html": {
+				"resources": [],
+				"refer": [
+					"view/goods/goodsDetails.html",
+					"view/goods/details/goodsDetails.html",
+					"view/login/login.html",
+					"view/goods/copy_search.html",
+					"view/goods/details/seacrch_details.html"
+				],
+				"priority": 0
+			},
+			"view/login/login.html": {
+				"resources": [
+					"images/login/weixin.png",
+					"images/login/phone.png",
+					"images/login/tzs.png",
+					"images/login/logo.png"
+				],
+				"refer": [
+					"view/login/toLogin.html",
+					"view/login/regist.html",
+					"view/self/self.html",
+					"view/login/smsLogin.html"
+				],
+				"priority": 0
+			},
+			"view/login/toLogin.html": {
+				"resources": [],
+				"refer": [
+					"view/login/login.html",
+					"view/login/regist.html"
+				],
+				"priority": 0
+			},
+			"view/login/regist.html": {
+				"resources": [],
+				"refer": [
+					"view/login/nextRegist.html",
+					"view/login/barcode_scan.html",
+					"view/inclued/userPage.html"
+				],
+				"priority": 0
+			},
+			"view/search/search.html": {
+				"resources": [],
+				"refer": [
+					"view/login/login.html",
+					"view/goods/goodsSearch.html",
+					"view/test.html"
+				],
+				"priority": 0
+			},
+			"view/self/self.html": {
+				"resources": [
+					"images/self/icon_my_jd@2x.png",
+					"images/self/icon_my_298.png",
+					"images/self/icon_my_question@2x.png",
+					"images/self/icon_my_taobao@2x.png",
+					"images/self/icon_my_agency@2x.png",
+					"images/self/icon_my_pingduoduo.png",
+					"images/self/icon_my_announcement@2x.png",
+					"images/self/icon_my_60.png",
+					"images/self/icon_my_service@2x.png",
+					"images/self/icon_my_share@2x.png",
+					"images/self/icon_my_help@2x.png",
+					"images/self/icon_my_collect@2x.png",
+					"images/self/icon_my_us@2x.png",
+					"fonts/mui.ttf"
+				],
+				"refer": [
+					"view/login/login.html",
+					"view/self/setting.html",
+					"view/self/setting/setting.html",
+					"view/self/orderInquiry/orderInquiry.html",
+					"view/self/order/queryOrder.html",
+					"view/self/welfare/share.html",
+					"view/inclued/userPage.html",
+					"view/self/help/collection.html",
+					"view/self/help/myShare.html",
+					"view/self/help/customer.html",
+					"view/self/help/aboutAs.html",
+					"view/self/fans/fans.html",
+					"view/self/myOrder/myOrder.html",
+					"view/self/pay/pay.html",
+					"view/self/withdrawal/withdrawal.html",
+					"view/self/welfare/redpack.html",
+					"view/self/help/help.html",
+					"view/self/help/notice.html",
+					"view/self/help/questions.html",
+					"view/self/help/member.html",
+					"view/goods/details/seacrch_details.html"
+				],
+				"priority": 0
+			},
+			"view/self/setting/setting.html": {
+				"resources": [],
+				"refer": [
+					"view/self/setting/nickname/nickname.html",
+					"view/self/setting/bindingAlipay/bindingAlipay.html",
+					"view/self/setting/changePwd/changePwd.html",
+					"view/inclued/openPage.html"
+				],
+				"priority": 0
+			},
+			"view/goods/goodsDetails.html": {
+				"resources": [],
+				"refer": [
+					"view/goods/goodsShare.html"
+				],
+				"priority": 0
+			},
+			"view/goods/details/goodsDetails.html": {
+				"resources": [],
+				"refer": [
+					"view/goods/details/goodsShare.html",
+					"view/inclued/openTaobao.html",
+					"view/inclued/openPage.html",
+					"view/login/login.html",
+					"view/goods/goodsSearch.html"
+				],
+				"priority": 0
+			},
+			"view/self/order/queryOrder.html": {
+				"resources": [],
+				"refer": [
+					"view/self/order/findInquired.html",
+					"view/self/order/notInquired.html",
+					"view/self/order/success.html",
+					"view/self/order/error.html",
+					"view/self/order/retrieveOrder.html",
+					"view/self/order/existOrder.html"
+				],
+				"priority": 0
+			},
+			"view/self/order/success.html": {
+				"resources": [],
+				"refer": [
+					"view/self/self.html"
+				],
+				"priority": 0
+			},
+			"view/inclued/userPage.html": {
+				"resources": [
+					"/css/mui.min.css"
+				],
+				"refer": [
+					"view/self/order/queryOrder.html"
+				],
+				"priority": 0
+			},
+			"view/goods/details/goodsShare.html": {
+				"resources": [],
+				"refer": [
+					"view/inclued/openPage.html",
+					"view/share/share.html"
+				],
+				"priority": 0
+			},
+			"view/goods/details/bannerDetails.html": {
+				"resources": [],
+				"refer": [
+					"view/inclued/openPage.html",
+					"view/goods/details/goodsShare.html"
+				],
+				"priority": 0
+			},
+			"view/self/withdrawal/withdrawal.html": {
+				"resources": [
+					"view/self/withdrawal/%3C%\u003dpath%20%%3E/trade/withdrawDeposit.htm"
+				],
+				"refer": [
+					"view/self/withdrawal/apply.html"
+				],
+				"priority": 0
+			},
+			"view/self/welfare/redpack.html": {
+				"resources": [
+					"/images/hongbao/petal1.png",
+					"/images/hongbao/petal9.png",
+					"/images/hongbao/petal8.png",
+					"/images/hongbao/petal2.png",
+					"/images/hongbao/petal3.png",
+					"/images/hongbao/petal5.png",
+					"/images/hongbao/petal6.png",
+					"/images/hongbao/petal4.png",
+					"/images/hongbao/petal7.png",
+					"fonts/mui.ttf"
+				],
+				"refer": [
+					"view/self/help/myShare.html",
+					"view/login/login.html",
+					"view/self/fans/fans.html",
+					"view/self/withdrawal/withdrawal.html"
+				],
+				"priority": 0
+			},
+			"view/goods/goodsMore.html": {
+				"resources": [],
+				"refer": [
+					"view/goods/details/freeGoodsDetails.html",
+					"view/goods/details/goodsDetails.html"
+				],
+				"priority": 0
+			},
+			"view/goods/details/freeGoodsDetails.html": {
+				"resources": [],
+				"refer": [
+					"view/inclued/openPage.html"
+				],
+				"priority": 0
+			},
+			"view/self/help/help.html": {
+				"resources": [],
+				"refer": [
+					"view/self/help/helpDetail.html",
+					"view/inclued/userPage.html",
+					"view/inclued/openPage.html",
+					"view/self/help/helpDateils.html"
+				],
+				"priority": 0
+			},
+			"view/self/help/notice.html": {
+				"resources": [],
+				"refer": [
+					"view/inclued/userPage.html"
+				],
+				"priority": 0
+			},
+			"view/self/myOrder/myOrder.html": {
+				"resources": [],
+				"refer": [
+					"view/goods/details/collectionDetail.html",
+					"view/goods/details/goodsDetails.html"
+				],
+				"priority": 0
+			},
+			"view/self/help/collection.html": {
+				"resources": [],
+				"refer": [
+					"view/goods/details/collectionDetail.html",
+					"view/goods/details/goodsDetails.html"
+				],
+				"priority": 0
+			},
+			"view/goods/details/collectionDetail.html": {
+				"resources": [],
+				"refer": [
+					"view/inclued/openPage.html",
+					"view/goods/details/goodsShare.html"
+				],
+				"priority": 0
+			},
+			"view/goods/goodsSearch.html": {
+				"resources": [],
+				"refer": [
+					"view/goods/details/goodsDetails.html"
+				],
+				"priority": 0
+			},
+			"view/goods/goodsDiscount.html": {
+				"resources": [],
+				"refer": [
+					"view/goods/details/goodsDetails.html"
+				],
+				"priority": 0
+			},
+			"view/goods/new_free.html": {
+				"resources": [],
+				"refer": [
+					"view/goods/details/new_freeDetails.html"
+				],
+				"priority": 0
+			},
+			"view/goods/more_goods.html": {
+				"resources": [],
+				"refer": [
+					"view/goods/details/goodsDetails.html"
+				],
+				"priority": 0
+			},
+			"view/self/order/existOrder.html": {
+				"resources": [],
+				"refer": [
+					"view/self/myOrder/myOrder.html"
+				],
+				"priority": 0
+			},
+			"view/test.html": {
+				"resources": [],
+				"refer": [
+					"view/goods/details/goodsDetails.html"
+				],
+				"priority": 0
+			},
+			"view/goods/copy_search.html": {
+				"resources": [],
+				"refer": [
+					"view/goods/details/seacrch_details.html",
+					"view/goods/details/goodsDetails.html",
+					"view/goods/details/bannerDetails.html"
+				],
+				"priority": 0
+			},
+			"view/goods/details/seacrch_details.html": {
+				"resources": [],
+				"refer": [
+					"view/inclued/openPage.html"
+				],
+				"priority": 0
+			},
+			"view/login/smsLogin.html": {
+				"resources": [],
+				"refer": [
+					"view/login/regist.html"
+				],
+				"priority": 0
+			},
+			"view/self/help/member.html": {
+				"resources": [],
+				"refer": [
+					"view/self/fans/fans.html"
+				],
+				"priority": 0
+			},
+			"view/goods/details/new_freeDetails.html": {
+				"resources": [],
+				"refer": [
+					"view/inclued/openPage.html"
+				],
+				"priority": 0
+			},
+			"view/goods/mother_infant.html": {
+				"resources": [],
+				"refer": [
+					"view/goods/goodsDiscount.html"
+				],
+				"priority": 0
+			},
+			"view/baby/mother_infant.html": {
+				"resources": [],
+				"refer": [
+					"view/goods/goodsDiscount.html"
+				],
+				"priority": 0
+			}
+		},
+		"idle": {
+			"resources": [
+				"images/load/guide_three.png",
+				"images/load/guide_one.png",
+				"images/load/guide_two.png",
+				"images/self/2.png",
+				"images/self/3.png",
+				"images/self/dingd.png",
+				"images/self/orderQuery.jpg",
+				"images/self/yaoqing.jpg",
+				"images/self/img_default_avatar@3x.png",
+				"images/share/icon_download_photo.png",
+				"images/share/icon_share_circle.png",
+				"images/share/icon_share_wechat.png",
+				"images/9.9.png",
+				"images/baoping.png",
+				"images/bg_label_jd.png",
+				"images/bg_label_taobao.png",
+				"images/bg_label_tm.png",
+				"images/daikuan.png",
+				"images/daili.png",
+				"images/discountjx.png",
+				"images/jingdong.png",
+				"images/jingxuan.png",
+				"images/ju.png",
+				"images/pingdd.png",
+				"images/taobao.png",
+				"images/xinyongka.png",
+				"images/yq.png",
+				"images/right.png",
+				"images/redbao.png",
+				"images/yq.png",
+				"images/close.png",
+				"images/discountjx.png",
+				"images/rede.png",
+				"images/tz.png",
+				"images/hometit1.png",
+				"images/redbaok.png",
+				"images/close.png",
+				"images/home/newVip.gif",
+				"images/login/logo.png",
+				"images/login/tzs.png",
+				"images/login/weixin.png",
+				"css/goods/goodsShare.css",
+				"css/self/orderInquiry.css",
+				"css/self/setting.css",
+				"css/allOld.css",
+				"css/styleOld.css",
+				"css/feedback.css",
+				"css/loaders.min.css",
+				"css/login.css",
+				"css/mui.picker.css",
+				"css/mui.poppicker.css",
+				"css/loaders.min.css",
+				"css/base.css",
+				"css/mui.css",
+				"css/common.css",
+				"css/loading.css",
+				"css/swiper.min.css",
+				"css/mui.min.css",
+				"css/style.css",
+				"iconfont/iconfont.css",
+				"css/all.css",
+				"iconfont/iconfont.ttf",
+				"js/api.js",
+				"js/constant.js",
+				"js/fastclick.js",
+				"js/feedback.js",
+				"js/global.js",
+				"js/hmt.js",
+				"js/jaliswall.js",
+				"js/mui.js",
+				"js/mui.lazyload.img.js",
+				"js/mui.lazyload.js",
+				"js/mui.picker.js",
+				"js/mui.poppicker.js",
+				"js/mui.previewimage.js",
+				"js/mui.view.js",
+				"js/mui.zoom.js",
+				"js/rem.js",
+				"js/swiper.min.js",
+				"js/template-web.js",
+				"js/vue.min.js"
+			]
+		}
+	},
+	"fullscreen": false
+}

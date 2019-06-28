@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<style type="text/css">
+			.mui-content h1{
+				margin-top:10px;
+				font-size: 18px;
+			}
+			.mui-content h3{
+				margin-top:30px;
+				font-size: 14px;
+			}
+			.mui-content p{
+				width: 90%;
+				height: 100%;
+				margin: 10px auto;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title" id="help_title">标题</h1>
+		</header>
+		
+		<div class="mui-content " id="content">
+		    <div class="mui-content-padded" v-html="content"> </div>
+		    	
+		</div>
+		
+		
+		<script src="../../../js/mui.min.js"></script>
+		<script src="../../../js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init();
+			
+			var vm = new Vue({
+				el:'#content',
+				data:{
+					content:''
+				}
+			})
+			
+			mui.plusReady(function(){
+				
+				var self = plus.webview.currentWebview();
+				vm.content = self.content.content;
+				document.getElementById("help_title").innerText = self.content.title;
+				
+				//去掉滚动条
+				plus.webview.currentWebview().setStyle({
+					scrollIndicator: 'none'
+				});
+				
+			})
+		</script>
+	</body>
+
+</html>

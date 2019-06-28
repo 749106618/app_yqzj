@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<style type="text/css">
+			.mui-content,.mui-grid-view.mui-grid-9{background-color: #FFFFFF;}
+			.baby-img{width: 100%;height: 100%;}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">母婴专用</h1>
+		</header>
+		
+		<div class="mui-content">
+		    <ul class="mui-table-view mui-grid-view mui-grid-9">
+				    <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
+				        <a id="4040" class="备孕">
+				            <img class="baby-img" src="../../images/baby/beiyun.png"/>
+				            <div class="mui-media-body">备孕</div>
+				        </a>
+				    </li>
+				    <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
+				        <a id="4041" class="0至6个月">
+				            <img class="baby-img" src="../../images/baby/1-6.png"/>
+				            <div class="mui-media-body">0至6个月</div>
+				        </a>
+				    </li>
+				    <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
+				        <a id="4042" class="7至12个月">
+				            <img class="baby-img" src="../../images/baby/muying.png"/>
+				            <div class="mui-media-body">7至12个月</div>
+				        </a>
+				    </li>
+				    <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
+				        <a id="4043" class="1至3岁">
+				            <img class="baby-img" src="../../images/baby/muyingcopy.png"/>
+				            <div class="mui-media-body">1至3岁</div>
+				        </a>
+				    </li>
+				      <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
+				        <a id="4044" class="4至6岁">
+				            <img class="baby-img" src="../../images/baby/muyingwanju.png"/>
+				            <div class="mui-media-body">4至6岁</div>
+				        </a>
+				    </li>
+				    <li class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6">
+				        <a id="4045" class="7至12岁">
+				            <img class="baby-img" src="../../images/baby/canju.png"/>
+				            <div class="mui-media-body">7至12岁</div>
+				        </a>
+				    </li>
+		       </ul>
+		    
+		</div>
+		
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init({swipeBack: false});
+			
+			
+			mui(".mui-content").on("tap","a",function(){
+				var searchType = this.getAttribute("id");
+				var name = this.getAttribute("class");
+				mui.openWindow({
+					id:'open_goods',
+					url:'/view/goods/goodsDiscount.html',
+	       			show:{
+						aniShow:'slide-in-right'
+					},
+		            waiting: {
+		                 autoShow: false //自动显示等待框，默认为true
+		            },
+					extras:{
+						searchType:searchType,
+						title:name
+					}
+				})
+			})
+		</script>
+	</body>
+
+</html>

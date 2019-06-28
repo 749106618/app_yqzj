@@ -1,0 +1,435 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>优惠商品</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="../../js/rem.js"></script>
+		<link href="../../iconfont/iconfont.css" rel="stylesheet">
+		<link href="../../css/mui.min.css" rel="stylesheet">
+		<link href="../../css/all.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="../../css/base.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/style.css" />
+		<style type="text/css">
+			.mui-content {
+				background-color: #FFFFFF;
+			}
+
+			.mui-content>.mui-table-view:first-child {
+				margin-top: 0;
+			}
+
+			.mui-bar-nav {
+				background-color: #fff;
+			}
+
+			.mui-media-body img {
+				width: 13px;
+				height: 13px;
+			}
+
+			.classify {
+				background-color: #fff;
+				border-radius: 8px;
+				height: 600px;
+				position: relative;
+				padding: 5px;
+			}
+
+			.classify-delete {
+				border-top-left-radius: 8px;
+				border-top-right-radius: 8px;
+				height: 50px;
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				box-shadow: 0 1px 2px #ccc;
+				display: flex;
+				align-items: center;
+			}
+
+			.classify-delete .active {
+				color: #000;
+			}
+
+			.classify-delete .active span {
+				font-size: 40px;
+			}
+
+			.classify-title {
+				font-size: 16px;
+				margin-top: 60px;
+				font-weight: 600;
+			}
+
+			.classify-list {
+				overflow: hidden;
+				margin-top: 5px;
+			}
+
+			.classify-list li {
+				float: left;
+				width: 25%;
+			}
+
+			.classify-list li a {
+				color: #000;
+				display: block;
+				background-color: #F1F1F1;
+				border-radius: 2px;
+				margin: 5px .2rem;
+				font-size: 12px;
+				height: 40px;
+				text-align: center;
+				line-height: 40px;
+			}
+
+			.classify-list li a:nth-child(3n+1) {
+				margin-left: 0;
+			}
+			.not-classify{
+				text-align: center;
+				
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title" id="titleText"></h1>
+			<a href="#picture" class="toggleSide mui-icon mui-action-menu mui-icon-bars mui-pull-right"></a>
+		</header>
+
+
+		<div class="mui-content" id="content" v-cloak>
+			<!-- 分类搜索 -->
+
+			<div id="picture" class="mui-popover mui-popover-action mui-popover-bottom">
+				<div class="classify">
+					<div class="classify-delete">
+						<a class="active" href="#"><span class="mui-icon mui-icon-closeempty"></span></a>
+					</div>
+					<div class="classify-title">商品分类</div>
+					<ul class="classify-list">
+						<li v-for="(item,index) in classifys" :classifyid="item"><a href="#">{{index}}</a></li>
+					</ul>
+					<div class="not-classify" v-if="classifys.length == 0">已您推荐所有商品</div>
+				</div>
+			</div>
+			
+			<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<div class="home-fashion mui-content-padded">
+						<ul class="mui-table-view mui-grid-view grid" id="good" v-if="layout == 'grid'">
+							<li class="mui-table-view-cell mui-media mui-col-xs-6" v-for="(good,index) in goods">
+								<a class="item" @tap="open_details(good)">
+									<img class="mui-media-object" :src="good.imgSrc">
+									<div class="mui-content-padded">
+										<span class="mui-media-body mui-ellipsis-2">
+											<img v-if="good.type==1" src="../../images/taobao.png" />
+											<img v-if="good.type==2" src="../../images/bg_label_jd.png" />
+											<img v-if="good.type==3" src="../../images/bg_label_tm.png" />
+											{{good.title}}
+										</span>
+										<div class="discount">
+											<span v-if="good.couponAmt==''">券 0</span>
+											<span v-if="good.couponAmt!=''">券 {{good.couponAmt}}</span>
+											<i>返 {{good.commission}}</i>
+										</div>
+										<p>¥<b>{{good.salePrice-good.couponAmt|tradeOffs}}</b><i>￥{{good.salePrice}}</i>
+											<span>月售 {{good.monthlySale}}</span>
+										</p>
+									</div>
+								</a>
+							</li>
+						</ul>
+						<ul class="mui-table-view list" v-if="layout == 'list'">
+							<li class="mui-table-view-cell mui-media" v-for="(good,index) in goods" style="padding: 5px 5px;margin: 5px 0 5px;">
+								<a href="javascript:;" @tap="open_details(good)">
+									<img class="mui-media-object mui-pull-left" :src="good.imgSrc">
+									<div class="mui-media-body mui-ellipsis-2" style="font-size: 14px;">
+										<img v-if="good.type==1" src="../../images/taobao.png" />
+										<img v-if="good.type==2" src="../../images/bg_label_jd.png" />
+										<img v-if="good.type==3" src="../../images/bg_label_tm.png" />
+										{{good.title}}
+									</div>
+									<div class="discount">
+										<span v-if="good.couponAmt==''">券 0</span>
+										<span v-if="good.couponAmt!=''">券 {{good.couponAmt}}</span>
+										<i>返 {{good.commission}}</i>
+									</div>
+									<p>
+										<span class="mui-pull-left"></span>¥<b>{{good.salePrice-good.couponAmt|tradeOffs}}</b>
+										<i v-if="good.type==1">淘宝价：{{good.salePrice}}</i>
+										<i v-if="good.type==2">京东价：{{good.salePrice}}</i>
+										<i v-if="good.type==3">天猫价：{{good.salePrice}}</i>
+										<span class="mui-pull-right">月售 {{good.monthlySale}}</span>
+									</p>
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../js/constant.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../js/api.js"></script>
+		<script src="../../js/copy.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui('body').on('tap', '.mui-popover-action a', function() {
+				var a = this,
+					parent;
+				//根据点击按钮，反推当前是哪个actionsheet
+				for (parent = a.parentNode; parent != document.body; parent = parent.parentNode) {
+					if (parent.classList.contains('mui-popover-action')) {
+						break;
+					}
+				}
+				//关闭actionsheet
+				mui('#' + parent.id).popover('toggle');
+			})
+			mui.init({
+				swipeBack: false, //启用右滑关闭功能
+				pullRefresh: {
+					container: '#pullrefresh',
+					down: {
+						style: 'circle', //必选，下拉刷新样式，目前支持原生5+ ‘circle’ 样式
+						color: '#2BD009', //可选，默认“#2BD009” 下拉刷新控件颜色
+						height: '50px', //可选,默认50px.下拉刷新控件的高度,
+						range: '100px', //可选 默认100px,控件可下拉拖拽的范围
+						offset: '0px', //可选 默认0px,下拉刷新控件的起始位置
+						auto: false, //可选,默认false.首次加载自动上拉刷新一次
+						callback: pulldownRefresh
+					},
+					up: {
+						height: 10,
+						contentinit: '正在加载中...',
+						contentrefresh: '正在加载中...',
+						contentnomore: '--  我是有底线的   --',
+						callback: pullupRefresh
+					}
+				}
+			})
+
+			var vue = new Vue({
+				el: '#content',
+				data: {
+					layout: 'grid',
+					goods: [],
+					searchType: '',
+					classifys: []
+				},
+				filters: {
+					tradeOffs: function(value) {
+						value = value.toFixed(2);
+						return parseFloat(value);
+					}
+				}
+			})
+
+
+			var pageNumber = 1; //页码
+			var pageCount = 0; //总页数
+			var searchType = ''; //类型
+			var userId = '';
+			var title = '';
+			var sortType = '';
+			var sort = '';
+
+			mui.plusReady(function() {
+				userId = plus.storage.getItem(sign_user_id);
+				var self = plus.webview.currentWebview();
+
+				searchType = self.searchType;
+
+				vue.searchType = self.searchType;
+
+				mui.post(httpUrl, {
+					method: 'goods00015',
+					module: goodApi,
+					requestId: requestId,
+					sign: signMd5,
+					timeStamp: timeStamp,
+					materialId: vue.searchType,
+					
+				}, function(res) {
+					if (res.respCode == '0000') {
+						if (res.result == '') {
+							return;
+						}
+						for (var key in res.result) {
+							//alert(JSON.stringify(res.result))
+							if(key == 'success'){
+								return;
+							}
+						}
+						vue.classifys = res.result;
+
+					} else {
+						mui.toast(res.respMsg);
+					}
+				}, 'json');
+
+
+
+				document.getElementById("titleText").innerText = self.title;
+
+				ajaxSortGoods(searchType, userId);
+
+				plus.webview.currentWebview().setStyle({
+					scrollIndicator: 'none'
+				});
+
+			})
+
+
+
+			function pulldownRefresh() {
+
+				ajaxRequestGoods(1, searchType, userId);
+				mui('#pullrefresh').pullRefresh().endPulldown();
+			}
+
+			function pullupRefresh() {
+
+				var userId = plus.storage.getItem(sign_user_id);
+
+				pageNumber = pageNumber + 1;
+
+				var that = this;
+
+
+				mui.post(httpUrl, {
+					method: 'goods00008',
+					module: goodApi,
+					requestId: requestId,
+					sign: signMd5,
+					timeStamp: timeStamp,
+					pageSize: '20',
+					pageNumber: pageNumber,
+					searchType: searchType,
+					uid: userId
+				}, function(res) {
+					if (res.respCode == '0000') {
+						if (res.result == null) {
+							that.endPullupToRefresh(true);
+							return;
+						}
+						vue.goods = vue.goods.concat(res.result);
+						/***
+						 * 判断是否为最后一页，如果是最后一页就停止请求
+						 */
+						that.endPullupToRefresh(false);
+					} else {
+						mui.toast(res.respMsg);
+					}
+				}, 'json');
+
+			}
+
+
+			var titleNView = {
+				backgroundColor: '#f7f7f7', //导航栏背景色  
+				titleText: '', //导航栏标题  
+				titleColor: '#000000', //文字颜色  
+				type: 'transparent', //透明渐变样式  
+				autoBackButton: true, //自动绘制返回箭头  
+				splitLine: { //底部分割线  
+					color: '#cccccc'
+				}
+			}
+
+			function open_details(item) {
+				titleNView.titleText = item.title;
+				mui.openWindow({
+					id: '/view/goods/details/goodsDetails.html',
+					url: '/view/goods/details/goodsDetails.html',
+					extras: {
+						goods: item,
+						goodsList: vue.goods
+					},
+					show: {
+						aniShow: 'slide-in-right'
+					},
+					waiting: {
+						autoShow: false //自动显示等待框，默认为true
+					},
+					styles: {
+						titleNView: titleNView,
+						popGesture: 'none'
+					}
+				})
+
+
+			}
+
+
+
+			mui(".orderTap").on("tap", "a", function(e) {
+
+				if (ids == 'btn_serach') {
+					if (vue.layout == 'list') {
+						document.getElementById("btn_serach").innerHTML = '<span class="mui-icon iconfont icon-fenlei"></span>';
+						vue.layout = 'grid';
+					} else {
+						document.getElementById("btn_serach").innerHTML = '<span class="mui-icon mui-icon-bars"></span>';
+						vue.layout = 'list';
+					}
+					return;
+				}
+
+
+			})
+
+
+			function ajaxRequestGoods(pageNumber, searchType, uid, sortType, sort) {
+				mui.post(httpUrl, {
+					method: 'goods00008',
+					module: goodApi,
+					requestId: requestId,
+					sign: signMd5,
+					timeStamp: timeStamp,
+					pageSize: '20',
+					pageNumber: pageNumber,
+					searchType: searchType,
+					uid: uid
+				}, function(res) {
+					if (res.respCode == '0000') {
+						vue.goods = [];
+						vue.goods = res.result.concat(vue.goods);
+					} else {
+						mui.toast(res.respMsg);
+					}
+				}, 'json');
+			}
+
+			function ajaxSortGoods(searchType, uid) {
+				mui.post(httpUrl, {
+					method: 'goods00008',
+					module: goodApi,
+					requestId: requestId,
+					sign: signMd5,
+					timeStamp: timeStamp,
+					pageSize: '20',
+					pageNumber: '1',
+					searchType: searchType,
+					uid: uid
+				}, function(res) {
+					if (res.respCode == '0000') {
+						vue.goods = res.result;
+					} else {
+						mui.toast(res.respMsg);
+					}
+				}, 'json');
+			}
+		</script>
+	</body>
+
+</html>

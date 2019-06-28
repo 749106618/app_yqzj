@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<style type="text/css">
+			img{width: 100%;height: 100%;}
+			body,#content,.mui-grid-view.mui-grid-9{background-color: #FFFFFF;}
+			.mui-grid-view.mui-grid-9 .mui-table-view-cell,.mui-grid-view.mui-grid-9{border: none;}
+			.mui-bar{background-color: #FFFFFF;}
+			.mui-bar-nav{box-shadow:none;}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">会员权益</h1>
+		</header>
+		<div class="mui-content" id="content">
+			<ul class="mui-table-view mui-grid-view mui-grid-9">
+				<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+				    <a @tap="open_fans()">
+				        <span class="">{{userInfo.todayPlus+userInfo.todayOrdinary}}</span>
+				        <div class="mui-media-body">今日邀请</div>
+				    </a>
+				</li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+				    <a @tap="open_fans()">
+				        <span class="">{{userInfo.yesterdayPlus}}</span>
+				        <div class="mui-media-body">昨日邀请</div>
+				    </a>
+				</li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4">
+				    <a @tap="open_fans()">
+				        <span class="">{{userInfo.total}}</span>
+				        <div class="mui-media-body">总邀请</div>
+				    </a>
+				</li>
+			</ul>
+			
+			
+		    <img src="../../../images/member.jpg"/>
+		</div>
+		<script src="../../../js/mui.min.js"></script>
+		<script src="../../../js/api.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../../js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init({swipeBack:true});
+			
+			var vm = new Vue({
+				el:'#content',
+				data:{
+					userInfo:{}
+				}
+			})
+			
+			mui.plusReady(function(){
+				
+				var userId = plus.storage.getItem(sign_user_id);
+				
+				mui.getJSON(httpUrl,{
+					method:'member',
+					module:userApi,
+					requestId:requestId,
+					sign:signMd5,
+					timeStamp:timeStamp,
+					uid:userId
+				},function(data){
+					if(data.respCode=='0000'){
+						vm.userInfo = data.result;
+					}
+				})
+				
+				//去掉滚动条
+				plus.webview.currentWebview().setStyle({
+					scrollIndicator: 'none'
+				});
+				
+				
+			})
+			
+			function open_fans(){
+				mui.openWindow({
+					id:'/view/self/fans/fans.html',
+					url:'/view/self/fans/fans.html',
+					show:{
+						aniShow:'slide-in-right'
+					},
+		            waiting: {
+		                 autoShow: false //自动显示等待框，默认为true
+		            }
+				})
+			}
+		</script>
+	</body>
+
+</html>

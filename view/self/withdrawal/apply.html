@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<style type="text/css">
+			body,.mui-content{background: #FFFFFF;}
+			.mui-input-row label{font-size: .30rem;padding: 8px 0 0;}
+			.mui-input-row label span{padding: 10px 0 0 50px;font-size: 20px;color: #ED0B3B;text-align: right;}
+			.mui-input-row input{font-size: 14px;}
+			.mui-content p{text-indent: .5rem;}
+			.mui-content button.mui-btn.mui-pull-right{background: #ED0B3B;border: none;color: #fff;}
+			.mui-btn-block{background:linear-gradient(0deg,rgba(253,90,114,1),rgba(253,43,91,1));border-radius:40px;border: none;padding: .4rem;color: #fff;}
+			.text-red{color: #ED0B3B;}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">提现申请</h1>
+		</header>
+		
+		<div class="mui-content" id="centent">
+			<div class="mui-text-center mui-content-padded">
+				<img src="../../../images/login/logo.png" width="100"/>
+			</div>
+		    <div class="mui-row mui-content-padded">
+		    	<div class="mui-col-xs-8">
+		    		<div class="mui-input-row">
+		    		    <label><span>￥</span></label>
+		    		    <input type="text" :placeholder="'可提现：'+account" id="account"/>
+		    		</div>
+		    		
+		    	</div>
+		    	<div class="mui-col-xs-4">
+		    		<button type="button" id="addBtn" class="mui-btn mui-pull-right">全部提现</button>
+		    	</div>		    	
+		    </div>	
+		    <div class="mui-content-padded">
+		    	<button id="apply" type="button" class="mui-btn mui-btn-block">立即提现</button>
+		    	<p>提现至<span>支付宝</span>，本次收取服务费为0元</p>
+		    	<p class="text-red">温馨提示：提现需T+1个工作日到账</p>
+		    </div>		
+		</div>
+		
+		
+		<script src="../../../js/rem.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../../js/mui.min.js"></script>
+		<script src="../../../js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../../js/api.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init();
+			
+			var vm = new Vue({
+				el:'#centent',
+				data:{
+					account:''
+				}
+			})
+			
+			mui.plusReady(function(){
+				var self = plus.webview.currentWebview();
+				
+				vm.account = self.account;
+			})
+			
+			document.getElementById("addBtn").addEventListener("tap",function(){
+				document.getElementById("account").value = vm.account;
+			})
+			
+			document.getElementById("apply").addEventListener("tap",function(){
+				var userId = plus.storage.getItem(sign_user_id);
+				var amt = document.getElementById("account").value;
+				mui.getJSON(httpUrl,{
+					method:'goods00010',
+					module:'goods-api',
+					requestId:'1527765597521',
+					sign:'089050fe2fe964292a8b996d25c16014',
+					timeStamp:'20180531191957',
+					uid:userId,
+					amt:amt
+				},function(res){
+					mui.alert(res.respMsg)
+				});
+			})
+		</script>
+	</body>
+
+</html>

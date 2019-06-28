@@ -1,0 +1,403 @@
+{
+	"index.html": {
+		"refer": [
+			"view/login/login.html",
+			"view/home/firstLoading.html",
+			"main.html",
+			"guide.html"
+		],
+		"resources": [
+			"js/mui.min.js"
+		]
+	},
+	"main.html": {
+		"resources": [
+			"view/home/home.html",
+			"view/category/category.html",
+			"view/self/welfare/redpack.html"
+		],
+		"refer": [
+			"view/home/home.html",
+			"view/self/self.html",
+			"view/category/category.html",
+			"view/share/share.html",
+			"guide.html",
+			"view/supermarket/supermarket.html",
+			"view/market/market.html",
+			"view/self/welfare/redpack.html"
+		]
+	},
+	"view/home/home.html": {
+		"refer": [
+			"view/goods/goodsDetails.html",
+			"view/search/search.html",
+			"view/goods/giscountGoods.html",
+			"view/goods/goodsMore.html",
+			"view/goods/goodsList.html",
+			"view/goods/goodsDiscount.html",
+			"view/goods/details/goodsDetails.html",
+			"view/inclued/credit.html",
+			"view/inclued/loan.html",
+			"view/inclued/openTaobao.html",
+			"view/inclued/openPage.html",
+			"view/login/login.html",
+			"view/goods/goodsSearch.html",
+			"view/goods/details/bannerDetails.html",
+			"view/test.html",
+			"view/goods/details/seacrch_details.html",
+			"view/goods/copy_search.html",
+			"view/goods/more_goods.html",
+			"view/goods/new_free.html",
+			"view/self/welfare/redpack.html",
+			"view/goods/mother_infant.html"
+		],
+		"resources": [
+			"images/jingxuan.png",
+			"images/home/newVip.gif",
+			"images/jingdong.png",
+			"images/daili.png",
+			"images/pingdd.png",
+			"images/ju.png",
+			"images/xinyongka.png",
+			"images/daikuan.png",
+			"images/9.9.png",
+			"images/baoping.png",
+			"images/taobao.png",
+			"images/update.png",
+			"manifest.json",
+			"fonts/mui.ttf"
+		]
+	},
+	"view/home/firstLoading.html": {
+		"refer": [
+			"view/login/login.html"
+		],
+		"resources": []
+	},
+	"guide.html": {
+		"refer": [
+			"main.html"
+		],
+		"resources": []
+	},
+	"view/category/category.html": {
+		"refer": [
+			"view/goods/goodsList.html",
+			"view/search/search.html",
+			"view/login/login.html",
+			"view/goods/copy_search.html"
+		],
+		"resources": []
+	},
+	"view/goods/goodsList.html": {
+		"refer": [
+			"view/goods/goodsDetails.html",
+			"view/goods/details/goodsDetails.html",
+			"view/login/login.html",
+			"view/goods/copy_search.html",
+			"view/goods/details/seacrch_details.html"
+		],
+		"resources": []
+	},
+	"view/login/login.html": {
+		"resources": [
+			"images/login/weixin.png",
+			"images/login/phone.png",
+			"images/login/tzs.png",
+			"images/login/logo.png"
+		],
+		"refer": [
+			"view/login/toLogin.html",
+			"view/login/regist.html",
+			"view/self/self.html",
+			"view/login/smsLogin.html"
+		]
+	},
+	"view/login/toLogin.html": {
+		"refer": [
+			"view/login/login.html",
+			"view/login/regist.html",
+			"view/home/home.html"
+		],
+		"resources": []
+	},
+	"view/login/regist.html": {
+		"refer": [
+			"view/login/nextRegist.html",
+			"view/login/barcode_scan.html",
+			"view/inclued/userPage.html"
+		],
+		"resources": []
+	},
+	"view/search/search.html": {
+		"refer": [
+			"view/login/login.html",
+			"view/goods/goodsSearch.html",
+			"view/test.html"
+		],
+		"resources": []
+	},
+	"view/self/self.html": {
+		"refer": [
+			"view/login/login.html",
+			"view/self/setting.html",
+			"view/self/setting/setting.html",
+			"view/self/orderInquiry/orderInquiry.html",
+			"view/self/order/queryOrder.html",
+			"view/self/welfare/share.html",
+			"view/inclued/userPage.html",
+			"view/self/help/collection.html",
+			"view/self/help/myShare.html",
+			"view/self/help/customer.html",
+			"view/self/help/aboutAs.html",
+			"view/self/fans/fans.html",
+			"view/self/myOrder/myOrder.html",
+			"view/self/pay/pay.html",
+			"view/self/withdrawal/withdrawal.html",
+			"view/self/welfare/redpack.html",
+			"view/self/help/help.html",
+			"view/self/help/notice.html",
+			"view/self/help/questions.html",
+			"view/self/help/member.html",
+			"view/goods/details/seacrch_details.html"
+		],
+		"resources": [
+			"images/self/icon_my_jd@2x.png",
+			"images/self/icon_my_298.png",
+			"images/self/icon_my_question@2x.png",
+			"images/self/icon_my_taobao@2x.png",
+			"images/self/icon_my_agency@2x.png",
+			"images/self/icon_my_pingduoduo.png",
+			"images/self/icon_my_announcement@2x.png",
+			"images/self/icon_my_60.png",
+			"images/self/icon_my_service@2x.png",
+			"images/self/icon_my_share@2x.png",
+			"images/self/icon_my_help@2x.png",
+			"images/self/icon_my_collect@2x.png",
+			"images/self/icon_my_us@2x.png",
+			"fonts/mui.ttf"
+		]
+	},
+	"view/self/setting/setting.html": {
+		"refer": [
+			"view/self/setting/nickname/nickname.html",
+			"view/self/setting/bindingAlipay/bindingAlipay.html",
+			"view/self/setting/changePwd/changePwd.html",
+			"view/inclued/openPage.html"
+		],
+		"resources": []
+	},
+	"view/goods/goodsDetails.html": {
+		"refer": [
+			"view/goods/goodsShare.html"
+		],
+		"resources": []
+	},
+	"view/goods/details/goodsDetails.html": {
+		"refer": [
+			"view/goods/details/goodsShare.html",
+			"view/inclued/openTaobao.html",
+			"view/inclued/openPage.html",
+			"view/login/login.html",
+			"view/goods/goodsSearch.html"
+		],
+		"resources": []
+	},
+	"view/self/order/queryOrder.html": {
+		"refer": [
+			"view/self/order/findInquired.html",
+			"view/self/order/notInquired.html",
+			"view/self/order/success.html",
+			"view/self/order/error.html",
+			"view/self/order/retrieveOrder.html",
+			"view/self/order/existOrder.html"
+		],
+		"resources": []
+	},
+	"view/self/order/success.html": {
+		"refer": [
+			"view/self/self.html"
+		],
+		"resources": []
+	},
+	"view/inclued/userPage.html": {
+		"refer": [
+			"view/self/order/queryOrder.html"
+		],
+		"resources": [
+			"/css/mui.min.css"
+		]
+	},
+	"view/goods/details/goodsShare.html": {
+		"refer": [
+			"view/inclued/openPage.html",
+			"view/share/share.html"
+		],
+		"resources": []
+	},
+	"view/goods/details/bannerDetails.html": {
+		"refer": [
+			"view/inclued/openPage.html",
+			"view/goods/details/goodsShare.html"
+		],
+		"resources": []
+	},
+	"view/self/withdrawal/withdrawal.html": {
+		"refer": [
+			"view/self/withdrawal/apply.html",
+			"view/self/withdrawal/%3C%\u003dpath%20%%3E/trade/withdrawDeposit.htm"
+		],
+		"resources": [
+			"view/self/withdrawal/%3C%\u003dpath%20%%3E/trade/withdrawDeposit.htm"
+		]
+	},
+	"view/self/welfare/redpack.html": {
+		"refer": [
+			"view/self/help/myShare.html",
+			"view/login/login.html",
+			"view/self/fans/fans.html",
+			"view/self/withdrawal/withdrawal.html"
+		],
+		"resources": [
+			"/images/hongbao/petal1.png",
+			"/images/hongbao/petal9.png",
+			"/images/hongbao/petal8.png",
+			"/images/hongbao/petal2.png",
+			"/images/hongbao/petal3.png",
+			"/images/hongbao/petal5.png",
+			"/images/hongbao/petal6.png",
+			"/images/hongbao/petal4.png",
+			"/images/hongbao/petal7.png",
+			"fonts/mui.ttf"
+		]
+	},
+	"view/goods/goodsMore.html": {
+		"refer": [
+			"view/goods/details/freeGoodsDetails.html",
+			"view/goods/details/goodsDetails.html"
+		],
+		"resources": []
+	},
+	"view/goods/details/freeGoodsDetails.html": {
+		"refer": [
+			"view/inclued/openPage.html"
+		],
+		"resources": []
+	},
+	"view/self/help/help.html": {
+		"refer": [
+			"view/self/help/helpDetail.html",
+			"view/inclued/userPage.html",
+			"view/inclued/openPage.html",
+			"view/self/help/helpDateils.html"
+		],
+		"resources": []
+	},
+	"view/self/help/notice.html": {
+		"refer": [
+			"view/inclued/userPage.html"
+		],
+		"resources": []
+	},
+	"view/self/myOrder/myOrder.html": {
+		"refer": [
+			"view/goods/details/collectionDetail.html",
+			"view/goods/details/goodsDetails.html"
+		],
+		"resources": []
+	},
+	"view/self/help/collection.html": {
+		"refer": [
+			"view/goods/details/collectionDetail.html",
+			"view/goods/details/goodsDetails.html"
+		],
+		"resources": []
+	},
+	"view/goods/details/collectionDetail.html": {
+		"refer": [
+			"view/inclued/openPage.html",
+			"view/goods/details/goodsShare.html"
+		],
+		"resources": []
+	},
+	"view/goods/goodsSearch.html": {
+		"refer": [
+			"view/goods/details/goodsDetails.html"
+		],
+		"resources": []
+	},
+	"view/goods/goodsDiscount.html": {
+		"refer": [
+			"view/goods/details/goodsDetails.html"
+		],
+		"resources": []
+	},
+	"view/goods/new_free.html": {
+		"refer": [
+			"view/goods/details/new_freeDetails.html"
+		],
+		"resources": []
+	},
+	"view/goods/more_goods.html": {
+		"refer": [
+			"view/goods/details/goodsDetails.html"
+		],
+		"resources": []
+	},
+	"view/self/order/existOrder.html": {
+		"refer": [
+			"view/self/myOrder/myOrder.html"
+		],
+		"resources": []
+	},
+	"view/test.html": {
+		"refer": [
+			"view/goods/details/goodsDetails.html"
+		],
+		"resources": []
+	},
+	"view/goods/copy_search.html": {
+		"refer": [
+			"view/goods/details/seacrch_details.html",
+			"view/goods/details/goodsDetails.html",
+			"view/goods/details/bannerDetails.html"
+		],
+		"resources": []
+	},
+	"view/goods/details/seacrch_details.html": {
+		"refer": [
+			"view/inclued/openPage.html"
+		],
+		"resources": []
+	},
+	"view/login/smsLogin.html": {
+		"refer": [
+			"view/login/regist.html"
+		],
+		"resources": []
+	},
+	"view/self/help/member.html": {
+		"refer": [
+			"view/self/fans/fans.html"
+		],
+		"resources": []
+	},
+	"view/goods/details/new_freeDetails.html": {
+		"refer": [
+			"view/inclued/openPage.html"
+		],
+		"resources": []
+	},
+	"view/goods/mother_infant.html": {
+		"refer": [
+			"view/goods/goodsDiscount.html"
+		],
+		"resources": []
+	},
+	"view/baby/mother_infant.html": {
+		"refer": [
+			"view/goods/goodsDiscount.html"
+		],
+		"resources": []
+	}
+}

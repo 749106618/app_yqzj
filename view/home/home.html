@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>首页</title>
+    <link href="../../iconfont/iconfont.css" rel="stylesheet">
+    <link href="../../css/mui.min.css" rel="stylesheet">
+    <link href="../../css/all.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../../css/base.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/style.css"/>
+    <script src="js/rem.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+	<style type="text/css">
+		.mui-bar-nav{box-shadow: none;}
+		#header .mui-scroll{position: static;overflow: hidden;}
+		#header .tags.mui-pull-left.mui-col-xs-9{overflow: auto;touch-action:auto}
+		.mui-media-body img{width: 13px;height: 13px;}
+		.display{display: none;}
+		.mui-content{margin-top: 13px;background-color: #FFFFFF;}
+		.home-newgoods img{height: 1.9rem;}
+		.mui-table-view.mui-grid-view{min-height: 80px;}
+	</style>
+</head>
+<body>
+<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+	<div class="mui-scroll" >
+  		<div v-cloak id="main">
+		    <header class="mui-bar mui-bar-nav" id="header">
+		     	<div class="dflex">
+		     		<div class="top-sch-box flex-col">
+			            <div class="centerflex">
+			                <i class="fdj iconfont icon-sousuo"></i>
+			                <div class="sch-txt" id="serach" v-text="'搜索宝贝 领券省钱 分享赚钱'" @tap="opeb_search_click()"></div>
+			            </div>
+			        </div>
+		     	</div>
+		     	
+		     	<div class="mui-scroll">
+			        <div class="sch-cont ">
+			            <div class="section">
+			                <div class="tit mui-pull-left">
+			                	<i class="iconfont icon-huore mui-col-xs-3"></i>热门搜索:
+			                </div>
+			                <div class="tags mui-pull-left mui-col-xs-9">
+			                    <span class="tag mui-ellipsis" v-for="tag in tags" @tap="open_goodsSearch(tag)" v-text="tag"></span>
+			                </div>
+			            </div>
+			            <div class="section"></div>
+			        </div>  
+			    </div>
+			    
+		    </header>
+		    <div class="mui-content">
+		    	
+			    	<div style="width: 100%;height:5.73rem;" id="slider" class="mui-slider" >
+				    	  <div class="mui-slider-group mui-slider-loop">
+					    	    <div class="mui-slider-item mui-slider-item-duplicate" v-for="(banner,index) in banners" v-if="banner.bannerLength === (index+1)">
+						    	      <a @tap="open_bannerLink(banner.commodityLink,banner.type,banner.name)" >
+						    	        <img :src="banner.picturePath"/>
+						    	      </a>
+					    	    </div>
+				    	  	 	 <div class="mui-slider-item" v-for="banner in banners">
+						    	      <a  @tap="open_bannerLink(banner.commodityLink,banner.type,banner.name)">
+						    	        <img :src="banner.picturePath"/>
+						    	      </a>
+					    	    </div>
+					    	    <div class="mui-slider-item mui-slider-item-duplicate" v-for="(banner,index) in banners" v-if="0 === index">
+						    	      <a @tap="open_bannerLink(banner.commodityLink,banner.type,banner.name)">
+						    	        <img :src="banner.picturePath"/>
+						    	      </a>
+					    	    </div>
+				    	  </div>
+				    	  <div class="mui-slider-indicator" >
+				    	  		<a v-for="(banner,index) in banners" >
+				    	    		<div v-if="index===0" class="mui-indicator mui-active"></div>
+				    	    		<div v-else class="mui-indicator"></div>
+				    	    	</a>
+				    	 </div>
+			    	</div>
+        
+        
+			        <div class="mui-slider-group" id="menu-nav">
+						<div class="mui-slider-item">
+							<ul class="mui-table-view mui-grid-view">
+								<li v-for="menu in menus" class="mui-table-view-cell mui-media">
+									<a href="#" @tap="open_goods(menu.searchType,menu.name)">
+										<img :src="menu.imgSrc" />
+										<div class="mui-media-body" v-text="menu.name"></div>
+									</a>
+								</li>
+			            	</ul>
+			            </div>
+			        </div>
+       
+			        <div v-if="newVip_redPack=='1'" class="home-newgoods mui-content mui-content-padded">
+			        	
+			        	<div id="new_vip_slider" class="mui-slider" >
+			        	  <div class="mui-slider-group mui-slider-loop">
+			        	    <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+			        	    <div class="mui-slider-item mui-slider-item-duplicate">
+			        	      <a @tap="open_new_free()">
+			        	        <img :src="newVip">
+			        	      </a>
+			        	    </div>
+			        	    <!-- 第一张 -->
+			        	    <div class="mui-slider-item">
+			        	      <a @tap="open_red_pack()">
+			        	        <img :src="redPack">
+			        	      </a>
+			        	    </div>
+			        	    <!-- 第二张 -->
+			        	    <div class="mui-slider-item">
+			        	      <a @tap="open_new_free()">
+			        	        <img :src="newVip">
+			        	      </a>
+			        	    </div>
+			        	    <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+			        	    <div class="mui-slider-item mui-slider-item-duplicate">
+			        	      <a @tap="open_red_pack()">
+			        	        <img :src="redPack">
+			        	      </a>
+			        	    </div>
+			        	  </div>
+			        	</div>
+			        	
+			           
+					</div>
+        
+       
+    
+			     <div class="home-fashion" id="homePage_goods">
+			     	<div class="mui-content" style="background: #FFFFFF;">
+			     		<div class="mui-content-padded" id="home_push">
+					      
+				        </div>
+			        </div>
+			        <div class="mui-content-padded">
+						<ul class="mui-table-view mui-grid-view" id="good">
+							<li class="mui-table-view-cell mui-media mui-col-xs-6" v-for="good in goods">
+								<a class="item"  @tap="open_detail(good)">
+									<img class="mui-media-object" :src="good.imgSrc" />
+									<div class="mui-content-padded">
+										<span class="mui-media-body mui-ellipsis-2">
+											<img v-if="good.type==1" :src="taobaoImg"/>
+											<img v-if="good.type==2" :src="jdImg"/>
+											<img v-if="good.type==3" :src="tianmaoImg"/>
+											<i v-text="good.title"></i>
+										</span>
+										<div class="discount">
+											<span v-if="good.couponAmt==''" v-text="'券 0'"></span>
+											<span v-if="good.couponAmt!=''" v-text="'券'+good.couponAmt"></span>
+											<i v-text="'返'+good.commission"> </i>
+										</div>
+										<p>
+											¥<b >{{good.salePrice-good.couponAmt|tradeOffs}}</b>
+											<i v-text="'￥'+good.salePrice"></i>
+											<span v-text="'月售 '+good.monthlySale"></span>
+										</p>
+									</div>								
+								</a>
+							</li>
+						</ul>
+					 </div>
+			     </div>
+			     
+			     
+			</div>
+		</div>
+	</div>
+</div>
+ <!--回顶部-->
+ <a id="scrollToTop" class="backTop hide"> <span class="mui-icon mui-icon-arrowup"></span></a> 
+ 
+ 
+  <div class="mui-card mui-text-center display" id="mui_card" style="height: 9rem;border: none;position: fixed;top: 26%;width: 96%;background: #fff;border-radius: 18px;z-index: 9999999;">
+	<img src="../../images/update.png" width="100%"/>
+	<div class="mui-card-header mui-text-center" id="mui_card_title" style="display:inherit;margin-top: -122px;">
+		最新版本信息
+	</div>
+	<div class="mui-card-content mui-text-center mui-content-padded" id="mui_card_centent">
+		最新版本
+	</div>
+	<div id="demo1" class="mui-text-center mui-content-padded">
+	</div>
+	<div class="mui-content-padded" >
+		<button type="button" class="mui-btn mui-btn-red mui-btn-block" id="update_btn" >立即更新</button>
+	</div>
+</div>
+
+<script src="../../js/rem.js"></script>    
+<script src="../../js/mui.min.js"></script>
+<script src="../../js/constant.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/api.js"></script>
+<script src="../../js/update.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/copy.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+	
+	mui.init({
+		swipeBack:false,
+		keyEventBind: {
+			backbutton: true //开启back按键监听
+		},
+		pullRefresh: {
+			container: '#pullrefresh',
+			down: {
+				  style:'circle',   //必选，下拉刷新样式，目前支持原生5+ ‘circle’ 样式
+			      color:'#2BD009',  //可选，默认“#2BD009” 下拉刷新控件颜色
+			      height:'50px',    //可选,默认50px.下拉刷新控件的高度,
+			      range:'100px',    //可选 默认100px,控件可下拉拖拽的范围
+			      offset:'0px',     //可选 默认0px,下拉刷新控件的起始位置
+			      auto: false,       //可选,默认false.首次加载自动上拉刷新一次
+				  callback: pulldownRefresh
+			},
+			up: {
+				height:10,
+				contentinit:'正在加载中...',
+				contentrefresh: '正在加载中...',
+				contentnomore:'———— 我是有底线的   ———',
+				callback: pullupRefresh
+			}
+		}
+	});
+	
+	
+	var homePage = new Vue({
+		el:'#main',
+		data:{
+			banners:[],
+			tags:[],
+			goods:[],
+			menus:[],
+			selecteds:[],
+			newVip:'',
+			redPack:'',
+			newVip_redPack:'0',
+			message:[
+				{title:'消息播报：137****4698用户参与新人免单活动...'},
+				{title:'消息播报：158****3652用户参与新人免单活动...'}
+			],
+			taobaoImg :'../../images/taobao.png',
+			jdImg:'../../images/bg_label_jd.png',
+			tianmaoImg:'../../images/bg_label_tm.png'
+		},
+		filters:{
+			tradeOffs:function(value){
+				value = value.toFixed(2);
+				return parseFloat(value);
+			}
+		}
+	});
+	
+	var userId = '';
+	
+	var mask=mui.createMask(function(){//遮罩层callback事件
+		return true;//返回true关闭mask
+	});
+	mask.show();
+	
+	
+	
+	function onNetChange(){
+		var flg = true;
+	　　//获取当前网络类型 
+	　　var nt = plus.networkinfo.getCurrentType(); 
+	　　switch(nt){ 
+	　　　　case plus.networkinfo.CONNECTION_ETHERNET: 
+	　　　　case plus.networkinfo.CONNECTION_WIFI: 
+	　　　　　　flg = false;
+	　　　　　　break; 
+	　　　　case plus.networkinfo.CONNECTION_CELL2G: 
+	　　　　case plus.networkinfo.CONNECTION_CELL3G: 
+	　　　　case plus.networkinfo.CONNECTION_CELL4G: 
+	　　　　　　flg = false;
+	　　　　　　break; 
+	　　　　default: 
+	　　　　　　break; 
+	　　} 
+		return flg;
+	} 
+	//热门搜索
+	mui.getJSON(httpUrl,hotSearch00001Data,function(event){
+		if(event.respCode=='0000'){
+			homePage.tags = event.result;
+		}
+	});
+	
+	/***
+	 * 滚动图
+	 */
+	mui.getJSON(httpUrl,adPosition00001Data,function(data){
+		if(data.respCode=='0000'){
+			var len = data.result.length;
+			homePage.banners = convertBanner(data.result,len);
+		}
+			
+	});
+	
+	/**
+	 * mui初始化顺序 1、不在任何方法体里优先  2、plusReady  3、下拉  ，上拉
+	 * 首页初始化
+	 */
+	mui.plusReady(function(){
+		/***
+		 * app之间相互唤醒
+		 */
+		//checkArguments();
+		plus.nativeUI.showWaiting("",{background:"#a3a4a4",color:"#FFFFFF"});
+		//判断用户是否连接网络
+		if(onNetChange()){
+			mui.confirm('似乎已断开网络连接，请开启网络再刷新',['刷新','取消'],function(event){
+				if(event.index==0){
+					plus.runtime.restart();
+				}
+			})
+			return;
+		}
+		ajaxRequestGoods();
+		
+	
+		/**
+		 * 小图标
+		 */
+		homePage.menus = [
+				{imgSrc:'../../images/jingxuan.png',name:'每日精选',searchType:'6'},
+				{imgSrc:'../../images/baoping.png',name:'爆品榜',searchType:'2'},
+				{imgSrc:'../../images/9.9.png',name:'9.9包邮',searchType:'1'},
+				{imgSrc:'../../images/ju.png',name:'聚划算',searchType:'6'},
+				{imgSrc:'../../images/xinyongka.png',name:'品牌券',searchType:'4'},
+				{imgSrc:'../../images/home/muying.png',name:'母婴版',searchType:'9'},
+				{imgSrc:'../../images/home/pintuan.png',name:'拼团',searchType:'8'},
+				{imgSrc:'../../images/home/quan.png',name:'大额券',searchType:'3'},
+				{imgSrc:'../../images/home/good.png',name:'有好货',searchType:'5'},
+				{imgSrc:'../../images/home/chaoliu.png',name:'潮流范',searchType:'7'},
+			];
+		homePage.newVip_redPack='1';
+		homePage.newVip = '../../images/home/newVip.gif';
+		homePage.redPack = '../../images/self/yaoqing.jpg';
+		
+		
+		//去掉滚动条
+		plus.webview.currentWebview().setStyle({
+			scrollIndicator: 'none'
+		});
+		
+		
+		userId = plus.storage.getItem(sign_user_id);
+		
+		/**
+		 * 剪切板内容
+		 */
+		var getText = copyToClip();
+		 if(getText!=''){
+		 	mui.confirm(getText, '<img src="../../images/zhinengsearch.png" style="width:100%;height:100%"/>', ['取消', '立即搜索'], function(e) {
+				if (e.index == 1) {
+					open_copy_search(getText);
+				} 
+			},'div')
+		 	
+		 }
+		 
+		 // 监听在线消息事件  
+       plus.push.addEventListener( "receive", function( msg ) {  
+            if (msg.aps) {  // Apple APNS message  
+                mui.alert( "升级成功" );  
+            } else {  
+                mui.alert( "升级成功" );  
+            }  
+        }, false );
+
+		
+		/**
+		 * 监听页面刷新
+		 */
+		window.addEventListener('refreshHome', function(e){//执行刷新
+			userId = plus.storage.getItem(sign_user_id);
+			ajaxRequestGoods();
+			//返回true,继续页面关闭逻辑
+			return true;
+        });
+        
+		
+	})
+	
+	
+	
+	
+	/***
+	 * 首页推荐商品
+	 * @param {Object} uid		       用户id
+	 * @param {Object} pageNumber  页码
+	 */
+	function ajaxRequestGoods(){
+		var userId = plus.storage.getItem(sign_user_id);
+		mui.post(httpUrl,{
+				method:'goods00010',
+				module:goodApi,
+				requestId:requestId,
+				sign:signMd5,
+				timeStamp:timeStamp,
+				searchType:'1',
+				uid:userId
+			},function(res){
+				document.getElementById("home_push").innerHTML = ' <h4 style="line-height:2.5;"><img src="../../images/home/tuijan.png" height="20px" style="vertical-align: middle;"/>为您推荐<a class="mui-pull-right" onclick="open_goodsMore()" >查看更多<i class="mui-icon mui-icon-arrowright" style="font-size: 18px;"></i></ a></h4>';
+				
+				if(res.respCode=='0000'){
+					
+					homePage.goods = [];
+					
+					homePage.goods = res.result;
+					
+					var gallery = mui('#slider');
+					gallery.slider({
+					  interval:2500//自动轮播周期，若为0则不自动播放，默认为0；
+					});
+					var new_vip_slider = mui("#new_vip_slider");
+					new_vip_slider.slider({
+						  interval:3000//自动轮播周期，若为0则不自动播放，默认为0；
+					});
+					plus.nativeUI.closeWaiting();
+					
+					mask.close();
+					
+				}
+			},'json'
+		);
+	}
+	
+	
+	var titleNView = {  
+		    backgroundColor: '#f7f7f7',//导航栏背景色  
+		    titleText: '',//导航栏标题  
+		    titleColor: '#000000',//文字颜色  
+		    type:'transparent',//透明渐变样式  
+		    autoBackButton: true,//自动绘制返回箭头  
+		    splitLine:{//底部分割线  
+		        color:'#cccccc'  
+		    }  
+		}  
+		/**
+		 * 首页商品详情，点击事件
+		 * @param {Object} item
+		 */
+		function open_detail(item) {
+			titleNView.titleText = item.title;
+			userId = plus.storage.getItem(sign_user_id);
+			if(userId==null||userId==''){
+				open_login();
+				return;
+			}
+			
+			mui.openWindow({
+				id:'/view/goods/details/goodsDetails.html',
+				url:'/view/goods/details/goodsDetails.html',
+				extras:{
+					goods:item,
+					goodsList:homePage.goods
+				},
+				show:{
+					aniShow:'slide-in-right'
+				},
+	            waiting: {
+	                 autoShow: false //自动显示等待框，默认为true
+	            },
+	             styles:{  
+			        titleNView:titleNView,
+			        popGesture: 'none'
+			    } 
+			})
+		}
+	
+	
+	
+		
+		/***
+		 * 小图标点击事件
+		 * @param {Object} searchType
+		 */
+		function open_goods(searchType,name){
+			
+			if(searchType=='11'){
+				/*mui.openWindow({
+					id:'view/inclued/openPage.html',
+					url:'/view/inclued/openPage.html',
+					extras:{
+						url: 'http://web.yunjuhe.vip/credit/list/v1.0/500382',
+						title:'信用卡办理'
+					},
+					show:{
+						aniShow:'slide-in-right'
+					},
+		            waiting: {
+		                 autoShow: false //自动显示等待框，默认为true
+		            }
+				})*/
+				mui.openWindow({
+					id:'view/baby/mother_infant.html',
+					url:'/view/baby/mother_infant.html',
+					show:{
+						aniShow:'slide-in-right'
+					},
+		            waiting: {
+		                 autoShow: false //自动显示等待框，默认为true
+		            }
+				})
+				return ;
+			}
+			if(searchType=='12'){
+				mui.openWindow({
+					
+					id:'credit',
+					url:'/view/inclued/openPage.html',
+					show:{
+						aniShow:'slide-in-right'
+					},
+		            waiting: {
+		                 autoShow: false //自动显示等待框，默认为true
+		            },
+					extras:{
+						url: 'http://web.yunjuhe.vip/loan/list/v1.0/500382',
+						title:'贷款办理'
+					}
+				})
+				return ;
+			}
+			
+			userId = plus.storage.getItem(sign_user_id);
+			if(userId==null||userId==''){
+				open_login();
+				return;
+			}
+			
+				
+			mui.openWindow({
+				id:'view/goods/goodsDiscount.html',
+				url:'/view/goods/goodsDiscount.html',
+       			show:{
+					aniShow:'slide-in-right'
+				},
+	            waiting: {
+	                 autoShow: false //自动显示等待框，默认为true
+	            },
+				extras:{
+					searchType:searchType,
+					title:name
+				}
+			})
+		}
+			
+		/**
+		 * 点击搜索框
+		 */
+		function opeb_search_click(){
+			mui.openWindow({
+				url:'/view/search/search.html',
+				id: 'view/search/search.html',
+       			show:{
+					aniShow:'slide-in-right'
+				},
+	            waiting: {
+	                 autoShow: false //自动显示等待框，默认为true
+	            }
+			})
+		}
+		
+		
+	
+	
+	
+	
+		/*回顶部*/
+		var scrollToTopBox = document.getElementById('scrollToTop'); //返回按钮tap  
+		scrollToTopBox.addEventListener('tap', function(e) {  
+		    e.stopPropagation(); 
+		    mui('#pullrefresh').pullRefresh().scrollTo(0, 0, 50);//滚动到顶部
+		});  
+		
+		// Android上监听原生滚动，iOS上监听div滚动，上拉超过一屏后显示按钮，否则隐藏，可自行在条件判断中修改  
+		    window.addEventListener('scroll', function(e) {  
+		        if (window.pageYOffset >= window.innerHeight && scrollToTopBox.classList.contains('hide')){ 
+		            scrollToTopBox.classList.remove('hide'); 
+		        }else if(window.pageYOffset < window.innerHeight && !scrollToTopBox.classList.contains('hide')){ 
+		            scrollToTopBox.classList.add('hide'); 
+		        } 
+		    });  
+		/*else {
+			scrollToTopBox.classList.remove('hide'); 
+		}*/
+		
+		
+		/**
+		 * 标签打开页面
+		 * @param {Object} tag
+		 */
+		function open_goodsMore(){
+			var userId = plus.storage.getItem(sign_user_id);
+			if(userId==null||userId==''){
+				open_login();
+				return;
+			}
+			mui.openWindow({
+				id: 'view/goods/more_goods.html',
+				url:'/view/goods/more_goods.html',
+       			show:{
+					aniShow:'slide-in-right'
+				},
+				waiting: {
+					autoShow: false
+				},
+				extras:{
+					goods:homePage.goods
+				}
+			})
+		
+		}
+		
+		
+		
+		
+	/***
+	 * 下拉刷新页面
+	 */
+	function pulldownRefresh(){
+		
+		/***
+		 * 滚动图
+		 */
+		mui.getJSON(httpUrl,adPosition00001Data,function(data){
+			if(data.respCode=='0000'){
+				var len = data.result.length;
+				homePage.banners = [];
+				homePage.banners = convertBanner(data.result,len);
+			}
+				
+		});
+		
+		var userId = plus.storage.getItem(sign_user_id);
+		mui.post(httpUrl,{
+				method:'goods00010',
+				module:goodApi,
+				requestId:requestId,
+				sign:signMd5,
+				timeStamp:timeStamp,
+				searchType:'1',
+				uid:userId
+			},function(res){
+				document.getElementById("home_push").innerHTML = ' <h4 style="line-height:2.5;"><img src="../../images/home/tuijan.png" height="20px" style="vertical-align: middle;"/>为您推荐<a class="mui-pull-right" onclick="open_goodsMore()" >查看更多<i class="mui-icon mui-icon-arrowright" style="font-size: 18px;"></i></ a></h4>';
+				
+				if(res.respCode=='0000'){
+					
+					homePage.goods = [];
+					
+					homePage.goods = res.result;
+					
+					var gallery = mui('#slider');
+					gallery.slider({
+					  interval:2500//自动轮播周期，若为0则不自动播放，默认为0；
+					});
+					var new_vip_slider = mui("#new_vip_slider");
+					new_vip_slider.slider({
+						  interval:3000//自动轮播周期，若为0则不自动播放，默认为0；
+					});
+					plus.nativeUI.closeWaiting();
+					
+					mask.close();
+					
+				}
+			},'json'
+		);
+		
+		pageNumber = 1;
+		pageCount = 0;
+		
+		mui('#pullrefresh').pullRefresh().endPulldown();
+		
+	}	
+		
+	/***
+	 * 上拉加载
+	 */
+	var pageNumber = 1;
+	var pageSize = 20;
+	var pageCount = 0;
+	function pullupRefresh(){
+		var userId = plus.storage.getItem(sign_user_id);
+		if(userId==null){
+			userId = '';
+		}
+		var that = this;
+		mui.post(httpUrl,{
+				method:'goods00005',
+				module:goodApi,
+				requestId:requestId,
+				sign:signMd5,
+				timeStamp:timeStamp,
+				pageNumber:pageNumber,
+				pageSize:pageSize,
+				uid:userId,
+				pid:''
+			},function(res){
+				if(res.respCode='0000'){
+					pageNumber = pageNumber + 1;
+				
+					homePage.goods = homePage.goods.concat(res.result.result);
+					
+					pageCount = res.result.pageCount;
+					
+					if(pageNumber==pageCount){
+						that.endPullupToRefresh(true);
+					}else{
+						that.endPullupToRefresh(false);
+					}
+				}else{
+					that.endPullupToRefresh(true);
+				}
+				
+				
+			},'json'
+		);
+		
+		
+	}
+	
+	
+	
+	/**
+	 * 版蓝图搜索商品
+	 * @param {Object} thirdId
+	 */
+	function open_bannerLink(thirdId,type,name){
+		var userId = plus.storage.getItem(sign_user_id);
+		if(userId==null||userId==''){
+			open_login();
+			return;
+		}
+		if(type=='1'){
+			mui.openWindow({
+				id:'view/inclued/openPage.html',
+				url:'/view/inclued/openPage.html',
+				extras:{
+					url: thirdId,
+					title:name
+				},
+				show:{
+					aniShow:'slide-in-right'
+				},
+	            waiting: {
+	                 autoShow: false //自动显示等待框，默认为true
+	            }
+			})
+			return;	
+		}
+		
+		
+		plus.nativeUI.showWaiting("",{background:"#dad5d5",color:"#FFFFFF"});
+		
+		mui.getJSON(httpUrl,{
+				method:'goods00013',
+				module:goodApi,
+				requestId:requestId,
+				sign:signMd5,
+				timeStamp:timeStamp,
+				thirdId:thirdId,
+				uid:userId
+			},function(res){
+				plus.nativeUI.closeWaiting();
+				titleNView.titleText = res.result.title;
+				mui.openWindow({
+						id:'view/goods/details/goodsDetails.html',
+						url:'/view/goods/details/goodsDetails.html',
+			   			extras:{
+							goods:res.result,
+							goodsList:null
+						},
+						show:{
+							aniShow:'slide-in-right'
+						},
+			            waiting: {
+			                 autoShow: false //自动显示等待框，默认为true
+			            },
+			             styles:{  
+					        titleNView:titleNView,
+					        popGesture: 'none'
+					    } 
+					
+				});
+		})
+		
+	}
+	
+	/**
+	 * 新人免单
+	 */
+	function open_new_free(){
+		var userId = plus.storage.getItem(sign_user_id);
+		if(userId==null||userId==''){
+			open_login();
+			return;
+		}
+		mui.openWindow({
+			id:'/view/goods/new_free.html',
+			url:'/view/goods/new_free.html',
+   			show:{
+				aniShow:'slide-in-right'
+			},
+            waiting: {
+                 autoShow: false //自动显示等待框，默认为true
+            }
+		})
+	}
+	
+	
+	function open_red_pack(){
+		var userId = plus.storage.getItem(sign_user_id);
+		if(userId==null||userId==''){
+			open_login();
+			return;
+		}
+			
+		mui.openWindow({
+			id:'view/self/welfare/redpack.html',
+			url:'/view/self/welfare/redpack.html',
+			show:{
+				aniShow:'slide-in-right'
+			},
+            waiting: {
+                 autoShow: false //自动显示等待框，默认为true
+            }
+		})
+	}
+	
+	
+	function open_goodsSearch(keyword){
+		var userId = plus.storage.getItem(sign_user_id);
+		if(userId==null||userId==''){
+			open_login();
+			return;
+		}
+		
+		
+		mui.openWindow({
+			url:'/view/goods/goodsSearch.html',
+			id: 'view/goods/goodsSearch.html',
+			show:{
+				aniShow:'slide-in-right'
+			},
+			waiting: {
+				autoShow: false
+			},
+			extras:{
+				keyword:keyword
+			}
+		})
+		
+	}
+	
+		
+	
+</script>
+</body>
+</html>

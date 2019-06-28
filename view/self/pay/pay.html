@@ -1,0 +1,117 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<style type="text/css">
+			body,.mui-content{background: #FFFFFF;}
+			.mui-content{margin-top: 40px;}
+			.mui-text-center img{width: 50px;height: 50px;}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav" style="z-index: 9999;">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">会员支付</h1>
+		</header>
+		
+		<div class="mui-content" id="content">
+			<div class="mui-text-center">
+				<img src="../../../images/login/logo.png"/>
+			</div>
+			<div class="mui-text-center">
+				<p>升级黄金会员需支付</p>
+				<p>￥{{money}}元</p>
+			</div>
+			<div class="mui-content-padded">
+				<h5>请选择支付方式</h5>
+			</div>
+			<div class="mui-content-padded">
+				<div class="mui-input-group">
+					<div class="mui-input-row mui-radio">
+						<label>
+							<img src="../../../images/zhifubao.png" width="25" height="25" style="vertical-align:middle;"/>
+							<span >支付宝支付</span>
+						</label>
+						<input name="radio1" type="radio" checked>
+					</div>
+				</div>
+			</div>
+			
+			<div class="mui-content-padded" style="margin-top: 50px;">
+				<button type="button" class="mui-btn mui-btn-success  mui-btn-block" @tap="pay()">支付￥{{money}}元</button>
+			</div>
+			
+		    
+		</div>
+		<div id="html">
+			
+			
+		</div>
+		<script src="../../../js/mui.min.js"></script>
+		<script src="../../../js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../../js/api.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init();
+			
+			
+			var vm = new Vue({
+				el:'#content',
+				data:{
+					rankName:'',
+					money:'',
+					rankId:''
+				}
+			})
+			
+			
+			mui.plusReady(function(){
+				var self = plus.webview.currentWebview();
+				vm.money = self.money;
+				vm.rankId = self.rankId
+				
+				if(vm.rankId == '4'){
+					vm.rankName = "钻石会员";
+				}else if(vm.rankId == '3'){
+					vm.rankName = "铂金会员";
+				}else{
+					vm.rankName = "普通用户";
+				}
+			})
+			
+			function pay(){
+				var userId = plus.storage.getItem(sign_user_id);
+				
+				mui.getJSON(htmlUrl+'/mobile/ajaxSaveUpgradeRecord.htm',{ userId:userId,rankId:vm.rankId},function(data){
+					if(data.resultCode==1){
+						var orderNo = data.orderNo;
+						console.log(orderNo)
+						mui.post(httpUrl,{
+								method:'pay',
+								module:'user-api',
+								requestId:'1527765597521',
+								sign:'089050fe2fe964292a8b996d25c16014',
+								timeStamp:'20180531191957',
+								uid:userId,
+								payment:'h5Alipay',
+                                orderNo:orderNo,
+							    rankId:vm.rankId
+							},function(event){
+								if(event.respCode=='0000'){
+									console.log(event.result.html)
+									document.getElementById("html").innerHTML = event.result.html;
+									document.getElementById("_alipaysubmit_").submit();
+								}
+							},'json'
+						);
+					}
+				})
+			}
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<style type="text/css">
+			.mui-table-view{margin-bottom: 2px;}
+			.mui-pull-right{font-size: 12px;margin-right: 30px;}
+			.mui-bar,.mui-content{background-color:#FFFFFF ;}
+			.mui-bar-nav ~ .mui-content{padding-top: 55px;}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">公司公告</h1>
+		</header>
+		<div class="mui-content" id="content">
+			
+		 	<ul class="mui-table-view" v-for="t in texts">
+		       <li class="mui-table-view-cell mui-collapse">
+					<a class="mui-navigate-right"><img src="../../../images/self/icon_my_announcement@2x.png" width="15" height="14"/>   {{t.title}} </a>
+					<div class="mui-collapse-content">
+						<p v-html="t.content"></p>
+					</div>
+				</li>	
+			
+			</ul>
+		</div>
+		<script src="../../../js/mui.min.js"></script>
+		<script src="../../../js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../../js/api.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init({swipeBack:true});
+			
+			var vm =new Vue({
+				el:'#content',
+				data:{
+					texts:[]
+				}
+			})
+			mui.plusReady(function(){
+				mui.getJSON(httpUrl,{
+					method:'article00002',
+					module:goodApi,
+					requestId:requestId,
+					sign:signMd5,
+					timeStamp:timeStamp,
+					pid:'7'
+				},function(data){
+					vm.texts = convertCategory(data.result);
+				})
+				
+				//去掉滚动条
+				plus.webview.currentWebview().setStyle({
+					scrollIndicator: 'none'
+				});
+			})
+			
+				
+			function convertCategory(items) {
+				var newItems = [];
+				items.forEach(function(item) {
+					var content = item.content.replace(item.content ? /&(?!#?\w+;)/g : /&/g, '&amp;').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&#39;/g, "\'");
+					newItems.push({
+						img:item.img,
+						title:item.title,
+						content:content,
+						createDate:item.createDateStr.substring(0,10)
+					});
+				});
+				return newItems;
+			}
+
+
+			
+
+		</script>
+	</body>
+
+</html>

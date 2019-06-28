@@ -1,0 +1,372 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../iconfont/iconfont.css" rel="stylesheet">
+		<link href="../../../css/all.css" rel="stylesheet">
+    	<link rel="stylesheet" type="text/css" href="../../../css/base.css"/>
+    	<link rel="stylesheet" type="text/css" href="../../../css/style.css"/>
+    	<link rel="stylesheet" type="text/css" href="../../../css/preview-image.css"/>
+    	 <script src="../../../js/rem.js"></script>    
+		<style type="text/css">
+			a{list-style: none;direction: none;}
+			.mui-table-view-cell.mui-collapse .mui-collapse-content{margin:.3rem  0;padding: .08rem 0;}
+			#ajax_detail{width: 100% !important;}
+			#ajax_detail table{width: 90% !important;}
+			#ajax_detail img{width: 100%;}
+			#ajax_detail p{font-size: 14px;}
+			.goodimg{width: 13px; height: 13px;}
+			.mui-title{padding:0 46PX ;}
+			.background_color{background: #CCCCCC;color: #FFFFFF;}
+			#ajax_detail p,#ajax_detail p span{font-size: 16px !important;}
+			#desc-module-1{display: none;}
+			.mui-table-view-cell{padding: 11px 5px;}
+			.mui-card{margin: 10px 5px;}
+			.mui-table-view-cell>a:not(.mui-btn){padding: 11px  20px;}
+			.mui-content,.mui-table-view-cell.mui-active{background-color: #FFFFFF;}
+			
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content" id="mui-content" style="margin-bottom: 1.5rem;" v-cloak>
+			
+			<div  style="width: 100%;height: 10.8rem;"   id="slider" class="mui-slider" >
+			    <div class="mui-slider-group mui-slider-loop">
+				    <div class="mui-slider-item mui-slider-item-duplicate" v-for="(img,index) in imgs" v-if="img.lengths === (index+1)">
+			    	      <a href="#">
+			    	        <img :src="img.path"/>
+			    	      </a>
+		    	    </div>
+	    	  	 	 <div class="mui-slider-item" v-for="img in imgs" >
+			    	      <a href="#">
+			    	        <img :src="img.path" data-preview-src="" data-preview-group="1"/>
+			    	      </a>
+		    	    </div>
+		    	    <div class="mui-slider-item mui-slider-item-duplicate" v-for="(img,index) in imgs" v-if="0 === index">
+		    	      <a href="#">
+		    	        <img :src="img.path"/>
+		    	      </a>
+		    	    </div>
+			    </div>
+	    	    <div class="mui-slider-indicator" >
+	    	  		<a v-for="(img,index) in imgs" >
+	    	    		<div v-if="index===0" class="mui-indicator mui-active" ></div>
+	    	    		<div v-else class="mui-indicator" ></div>
+	    	    	</a>
+	    	    </div>
+			</div>
+			
+			<div class="mui-content-padded" >
+				<span class="mui-media-body mui-ellipsis-2">
+					<img v-if="goods.type==1" class="goodimg" src="../../../images/taobao.png"/>
+					<img v-if="goods.type==2" class="goodimg" src="../../../images/bg_label_jd.png"/>
+					<img v-if="goods.type==3" class="goodimg" src="../../../images/bg_label_tm.png"/>
+					<span id="good_title_copy">{{goods.title}}</span>
+				</span>
+				<p><b style="color: #CF2D28;" >¥ {{goods.salePrice-goods.couponAmt|tradeOffs}}</b>
+					<i v-if="goods.type==1">  淘宝价：<s>{{goods.salePrice}}</s></i>
+					<i v-if="goods.type==2">  京东价：<s>{{goods.salePrice}}</s></i>
+					<i v-if="goods.type==3">  天猫价：<s>{{goods.salePrice}}</s></i>
+					<span class="mui-pull-right">月售{{goods.monthlySale}}</span>
+				</p>
+				
+				<div class="coupon coupon-wave-left coupon-yellow" v-if="goods.couponAmt!=''">
+					<div class="coupon-info coupon-hole coupon-info-right-dashed">
+						<div class="coupon-price">{{goods.couponAmt}}元优惠券</div>		
+						<div class="coupon-expiry-date" >有效期：{{goods.couponStartDate}} - {{goods.couponEndDate}}</div>
+					</div>
+					<div class="coupon-get coupon-get-already" @tap="coupon_get_already(thirdUrl)" >立即领取</div>
+				</div>
+				
+				<div class="coupon coupon-wave-left coupon-yellow" v-if="goods.couponAmt==''">
+					<div class="coupon-info coupon-hole coupon-info-right-dashed">
+						<div class="coupon-price">预估佣金 {{goods.commission}} 元</div>		
+						<div class="coupon-expiry-date" >购买商品返佣金</div>
+					</div>
+					<div class="coupon-get coupon-get-already" @tap="coupon_get_already(thirdUrl)" >立即购买</div>
+				</div>
+				
+			</div>
+			
+			<div class="mui-card">
+				<div class="mui-card-header mui-card-media">
+					<img :src="shop.shopImg" />
+					<div class="mui-media-body">
+						{{goods.shopName}}
+						<p v-if="goods.type==1">淘宝</p>
+						<p v-if="goods.type==2">京东</p>
+						<p v-if="goods.type==3">天猫</p>
+					</div>					
+				</div>
+				<div class="mui-card-footer">
+					<a class="mui-card-link">宝贝描述{{shop.descStar}}</a>
+					<a class="mui-card-link">卖家服务{{shop.serStar}}</a>
+					<a class="mui-card-link">物流服务{{shop.shipStar}}</a>
+				</div>
+			</div>
+			
+			<ul class="mui-table-view" >
+				<li class="mui-table-view-cell mui-collapse mui-active">
+					<a class="mui-navigate-right">查看宝贝详情</a>
+					<div class="mui-collapse-content" id="ajax_detail"></div>	
+				</li>
+			</ul>
+		    
+		    	
+		    	
+		    <div class="home-fashion mui-content-padded" v-if="goodsList!=null">
+	            <h4 class="mui-text-center">—— 为您推荐  ——</h4>
+				<ul class="mui-table-view mui-grid-view" id="good">
+					<li class="mui-table-view-cell mui-media mui-col-xs-6" v-for="(good,index) in goodsList">
+						<a class="item"  @tap="open_details(good)" >
+							<img class="mui-media-object" :src="good.imgSrc">
+							<div class="mui-content-padded">
+								<span class="mui-media-body mui-ellipsis-2">
+									<img v-if="good.type==1" class="goodimg" src="../../../images/taobao.png"/>
+									<img v-if="good.type==2" class="goodimg" src="../../../images/bg_label_jd.png"/>
+									<img v-if="good.type==3" class="goodimg" src="../../../images/bg_label_tm.png"/>
+									{{good.title}}
+								</span>
+								<div class="discount">
+									<span>券 {{good.couponAmt}}</span>
+									<i>返 {{good.commission}}</i>
+								</div>
+								<p>¥<b>{{good.salePrice-good.couponAmt|tradeOffs}}</b><i>￥ {{good.salePrice}}</i>
+									<span>月售 {{good.monthlySale}}</span>
+								</p>
+							</div>								
+						</a>
+					</li>
+				</ul>
+		   	</div>
+		   	
+		    	
+		    <nav class="mui-bar mui-bar-tab">
+			    <a class="mui-col-xs-2 mui-tab-item" id="tab1">
+			        <span class="mui-icon mui-icon-star"></span>
+			        <span class="mui-tab-label">收藏</span>
+			    </a>
+			    <a class="mui-tab-item yecol" href="/view/goods/details/goodsShare.html" id="tab2" :data="goods">
+			        <span class="mui-tab-label">预估佣金¥{{goods.commission}}</span>
+			    </a>
+			    <a class="mui-tab-item ccol" :href="thirdUrl" id="tab3">		        
+			        <span class="mui-tab-label" v-if="goods.couponAmt==''" >立即购买</span>
+			         <span class="mui-tab-label" v-if="goods.couponAmt!=''" >领券¥{{goods.couponAmt}}</span>
+			    </a>
+			</nav>		
+	</div>
+	
+		 <!--回顶部-->
+	     <a id="scrollToTop" class="backTop hide"> <span class="mui-icon mui-icon-arrowup"></span></a> 
+		
+<script src="../../../js/mui.min.js"></script>
+<script src="../../../js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/api.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/constant.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/goods_detail.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/mui.zoom.js"></script>
+<script src="../../../js/mui.previewimage.js"></script>
+		<script type="text/javascript">
+			
+			mui.init({swipeBack:false,
+					  gestureConfig:{
+					   longtap: true //默认为false
+					  }
+					});
+					
+			
+			var userId = '';
+			
+			var vm = new Vue({
+				el: '#mui-content',
+				data: {
+					imgs:[],		//记录商品图片
+					goods:{},		//转链商品
+					shop:{},		//店铺
+					goodsList:[],	//上级页面传递的商品集合
+					thirdUrl:""
+				},
+				filters:{
+					tradeOffs:function(value){
+						value = value.toFixed(2);
+						return parseFloat(value);
+					}
+				}
+			});
+			
+			
+			
+			/**
+			 * 初始化状态
+			 * 这是在预加载时初始化内容
+			 */
+			mui.plusReady(function () {
+				
+				var self = plus.webview.currentWebview();
+				
+				vm.goods = self.goods;	
+				
+				userId = plus.storage.getItem(sign_user_id);  //获取本地用户
+				
+				if(self.goods.smallImg == undefined||typeof(self.goods.smallImg) == undefined){
+					
+					vm.imgs = [{path:self.goods.imgSrc,lengths:1}];
+				}else{
+					var imgs = self.goods.smallImg.split(",");
+					//滚动图片
+	    			vm.imgs = convertGoodsDetaImage(imgs,imgs.length);
+				}
+				
+						
+				
+				processGoods(httpUrl,vm.goods.thirdId,userId,vm.goods.title,vm.goods.imgSrc);
+				
+				
+			    getShopName(vm.goods.shopName,vm.goods.sellerId);		
+			    //查询店铺信息
+				
+				getGoodsDetails(vm.goods.thirdId,vm.goods.thirdUrl); //查询读文详情
+				vm.goodsList = self.goodsList;        //传递过来的为你推荐
+				
+				/**
+				 * 3秒钟后执行图片滚动
+				 */
+				setTimeout(function(){
+					var gallery = mui('#slider');
+					gallery.slider({
+					  interval:0	//自动轮播周期，若为0则不自动播放，默认为0；
+					});
+				},500);
+				
+				/***
+				 * 去掉边框
+				 */
+				plus.webview.currentWebview().setStyle({
+					scrollIndicator: 'none'
+				});
+				
+				//点击关闭时，隐藏自己时状态
+				self.addEventListener("hide",function (e) {
+					window.scrollTo(0, 0);
+				},false);
+			
+				mui.previewImage();
+			})
+			
+			
+			/***
+			 * 这里是底部导航点击事件
+			 * 根据id判断点击事件的相关内容
+			 */
+			var num = 1;
+			
+			mui('.mui-bar-tab').on('tap', 'a', function(e) {
+				
+				var uid = plus.storage.getItem(sign_user_id);
+				
+				var id = this.getAttribute("id");
+				
+				var thirdId = vm.goods.thirdId;
+				//用户点击收藏
+				if(id=='tab1'){
+					if(num==1){
+						collection00002(uid,thirdId);
+						num++;
+						return;
+					}
+					collection00003(uid,thirdId);
+					num--;
+					return ;
+				}
+				
+				
+				var href = this.getAttribute("href");
+				
+				//分享圈
+				if(id=='tab2'){
+					mui.openWindow({
+						id:'goodsShare.html',
+						url:href,
+						extras:{
+							good:vm.goods,
+							thirdUrl:vm.thirdUrl
+						},
+						show:{
+							aniShow:'slide-in-right'
+						},
+			            waiting: {
+			                 autoShow: false //自动显示等待框，默认为true
+			            }
+					})
+					return;
+				}
+				//用户领券
+				coupon_get_already(href);
+			})
+			
+			
+			/**
+			 * 本页内部点击事件
+			 * @param {Object} good
+			 */
+			function open_details(good) {
+				
+				//滚动图片
+				var imgs = good.smallImg.split(",");
+	    		vm.imgs = convertGoodsDetaImage(imgs,imgs.length);
+	    		vm.goods = good;
+	    		var userId = plus.storage.getItem(sign_user_id);
+	    		
+	    		processGoods(httpUrl,vm.goods.thirdId,userId,vm.goods.title,vm.goods.imgSrc);
+	    		
+	    		getGoodsDetails(vm.goods.thirdId,vm.goods.thirdUrl);
+			    
+			    getShopName(vm.goods.shopName,vm.goods.sellerId);		
+	    		
+				
+				var gallery = mui('#slider');
+				gallery.slider({
+				  interval:0//自动轮播周期，若为0则不自动播放，默认为0；
+				});
+				window.scrollTo(0,0);  
+					
+			}
+			
+			document.getElementById("good_title_copy").addEventListener("longtap",function(){
+				this.classList.add("background_color");
+			
+					// 复制链接到剪切板
+					var copy_content = this.innerText;
+					// 判断是安卓还是 ios
+					if(mui.os.ios) {
+						//ios
+						var UIPasteboard = plus.ios.importClass("UIPasteboard");
+						var generalPasteboard = UIPasteboard.generalPasteboard();
+						// 设置 / 获取文本内容:
+						generalPasteboard.plusCallMethod({
+							setValue: copy_content,
+							forPasteboardType: "public.utf8-plain-text"
+						});
+						generalPasteboard.plusCallMethod({
+							valueForPasteboardType: "public.utf8-plain-text"
+						});
+					} else {
+						// 安卓
+						var context = plus.android.importClass("android.content.Context");
+						var main = plus.android.runtimeMainActivity();
+						var clip = main.getSystemService(context.CLIPBOARD_SERVICE);
+						plus.android.invoke(clip, "setText", copy_content);
+					}
+					mui.toast("商品标题复制成功")
+			})
+			
+			
+		</script>
+	</body>
+
+</html>

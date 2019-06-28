@@ -1,0 +1,233 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../../css/mui.min.css"/>
+		<link href="../../../iconfont/iconfont.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="../../../css/self/withdrawal.css"/>
+		<style  type="text/css">
+	        [v-cloak] {
+	            display: none;
+	        }
+	        .mui-bar-nav ~ .mui-content{padding-top: 0;}
+			.mui-bar-nav{background: transparent;padding-top:30px;}
+			.mui-bar{border-bottom: 0;-webkit-box-shadow:none;}
+			.mui-bar-nav.mui-bar .mui-icon{margin: .4rem 0;padding: .1rem 1px;}
+			.mui-bar-nav .iconfont, .mui-bar-nav .mui-icon,.p-text,.mui-title{color: #FFFFFF;}
+			.mui-bar-nav ~ .mui-content{padding: 15px auto;}
+			
+    	</style>
+</head>
+<body>
+
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		<h1 class="mui-title">会员收益</h1>
+	</header>
+
+
+	<section class="aui-flexView" >
+		<section class="aui-scrollView" id="centent" v-cloak>
+			<div class="aui-fund-box"></div>
+			<div class="aui-fund-top">
+				<div class="aui-flex">
+					<div class="aui-flex-box">
+						<h2>提现余额</h2>
+						<h3 >¥ {{userAccount.balance - userAccount.frozen|tradeOffs}}</h3>
+					</div>
+					<div class="aui-flex-box">
+						<h2>累计提现金额</h2>
+						<h3>¥ {{userAccount.withdrawAmt}}</h3>
+					</div>
+				</div>
+				<div class="aui-palace">
+					<a  class="aui-palace-grid">
+						<h2>结算收入</h2>
+						<p>¥ {{userAccount.settAmt|tradeOffs}}</p>
+					</a>
+					<a  class="aui-palace-grid">
+						<h2 >本月预估</h2>
+						<p>¥ {{userAccount.estimateMonth}}</p>
+					</a>
+					<a  class="aui-palace-grid">
+						<h2>上月预估</h2>
+						<p>¥ {{userAccount.estimateLMonth}}</p>
+					</a>
+	
+	
+				</div>
+	
+	
+			</div>
+			<div class="divHeight"></div>
+	
+	
+			<div class="aui-palace">
+				<a  class="aui-palace-grid">
+					<h2>今日付款</h2>
+					<p>¥ {{userAccount.todayPaid}}</p>
+				</a>
+				<a  class="aui-palace-grid">
+					<h2 >今日收入</h2>
+					<p>¥ {{userAccount.todayEstimate}}</p>
+				</a>
+				<a  class="aui-palace-grid">
+					<h2>今日分润</h2>
+					<p>¥ {{userAccount.todayRebate}}</p>
+				</a>
+			</div>
+	
+	
+			<div class="aui-palace">
+				<a  class="aui-palace-grid">
+					<h2>昨日付款</h2>
+					<p>¥ {{userAccount.yesterdayPaid}}</p>
+				</a>
+				<a  class="aui-palace-grid">
+					<h2 >昨日收入</h2>
+					<p>¥ {{userAccount.yesterdayEstimate}}</p>
+				</a>
+				<a  class="aui-palace-grid">
+					<h2>昨日分润</h2>
+					<p>¥{{userAccount.yesterdayRebate}}</p>
+				</a>
+			</div>
+	
+			<div class="aui-head b-line">
+			</div>
+			<div class="aui-problem-box">
+				<ul class="mui-table-view mui-table-view-chevron" style="margin-top: 10px;">
+					<li class="mui-table-view-cell">
+						<a class="mui-navigate-right" :href="href+'/trade/prepareIncomeDetail.htm?type=1&uid='+userId">结算佣金明细
+						</a>
+					</li>
+				</ul>
+				<ul class="mui-table-view mui-table-view-chevron" style="margin-top: 10px;">
+					<li class="mui-table-view-cell">
+						<a class="mui-navigate-right" :href="href+'/trade/prepareIncomeDetail.htm?type=2&uid='+userId">分销收入明细
+						</a>
+					</li>
+				</ul>
+				
+				<ul v-if="userAccount.rankId == 4" class="mui-table-view mui-table-view-chevron" style="margin-top: 10px;">
+					<li class="mui-table-view-cell">
+						<a class="mui-navigate-right" :href="href+'/trade/prepareIncomeDetail.htm?type=3&uid='+userId">管理奖
+						</a>
+					</li>
+				</ul>
+				
+				
+				
+				<ul v-if="userAccount.rankId == 4 || userAccount.rankId == 3" class="mui-table-view mui-table-view-chevron" style="margin-top: 10px;">
+					<ul class="mui-table-view mui-table-view-chevron" style="margin-top: 10px;">
+						<li class="mui-table-view-cell">
+							<a class="mui-navigate-right" :href="href+'/trade/prepareIncomeDetail.htm?type=5&uid='+userId">会员费明细
+							</a>
+						</li>
+					</ul>
+				</ul>
+	
+				<ul class="mui-table-view mui-table-view-chevron" style="margin-top: 10px;">
+					<li class="mui-table-view-cell">
+						<a class="mui-navigate-right" :href="href+'/trade/depositDetail.htm?uid='+userId">提现明细
+						</a>
+					</li>
+				</ul>
+			</div>
+			<a id="withdrawDeposit" @tap="withdrawDeposit()"  class="aui-tabBar-item" style="margin: 40px;">立即提现</a>
+		</section>
+</section>
+		
+		<script src="../../../js/mui.min.js"></script>
+		<script src="../../../js/api.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../../js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init({
+                    beforeback: function() {
+						var targetUser = plus.webview.getWebviewById("view/self/self.html");
+						mui.fire(targetUser, "refreshUser", {content:"刷新个人中心"});
+						return true;
+					}
+			})
+			
+			
+			var vm = new Vue({
+				el:'#centent',
+				data:{
+					userAccount:{
+						balance:0,
+						frozen:0,
+						withdrawAmt:0,
+						settAmt:0,
+						estimateMonth:0,
+						estimateLMonth:0,
+						todayPaid:0,
+						todayEstimate:0,
+						todayRebate:0,
+						yesterdayPaid:0,
+						yesterdayEstimate:0,
+						yesterdayRebate:0,
+						rankId:0
+					},
+					href:'',
+					userId:''
+				},
+				filters:{
+					tradeOffs:function(value){
+						//return value.toFixed(2);
+						return parseFloat(value);
+					}
+				}
+			})
+			
+			mui.plusReady(function(){
+				
+				var userId = plus.storage.getItem(sign_user_id);
+				
+				/**
+				 * 用户账户信息
+				 */
+				mui.getJSON(httpUrl,{
+						method:'account00001',
+						module:tradeApi,
+						requestId:requestId,
+						sign:signMd5,
+						timeStamp:timeStamp,
+						pageNumber:'1',
+						pageSize:'20',
+						uid:userId
+					},function(event){
+						if(event.respCode=='0000'){
+							vm.userAccount = event.result;
+							vm.userId = userId;
+							vm.href = htmlUrl;
+							
+						}
+					});
+				
+				
+			})
+			
+			function withdrawDeposit(){
+				var userId = plus.storage.getItem(sign_user_id);
+				mui.openWindow({
+					id:htmlUrl+'/trade/withdrawDeposit.htm',
+					url:htmlUrl+"/trade/withdrawDeposit.htm?uid="+userId,
+						show:{
+							aniShow:'slide-in-right'
+						},
+			            waiting: {
+			                 autoShow: false //自动显示等待框，默认为true
+			            }
+				})
+			}
+			
+			
+			
+		</script>
+	</body>
+
+</html>

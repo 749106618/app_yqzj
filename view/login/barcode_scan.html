@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>扫描二维码</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<style type="text/css">
+			html, body ,div{height:100%;width: 100%;}
+			.mui-bar{height: 60px;}
+			#bcid{width: 100%;height: 80%;position: absolute;background: #000000;margin-top: 65px;}
+			.fbt{color: #0E76E1;width: 50%;background-color: #ffffff;float: left;line-height: 44px;text-align: center;padding: 0 20px;}
+		</style>
+
+	</head>
+
+	<body style="background-color: #000000;">
+		<header class="mui-bar mui-bar-nav" style="background-color: #ffffff;">
+		  <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		  <h1 class="mui-title" style="color: #0E76E1;">扫描二维码</h1>
+		  <span class="mui-icon mui-icon-spinner-cycle mui-spin mui-pull-right" id="turnTheLight"></span>
+		</header>
+		
+		<div id="bcid">   
+	     <!--盛放扫描控件的div-->  		
+		</div>
+		
+		<div class="mui-bar mui-bar-footer" style="padding: 0px;">
+			<div class="fbt" >
+				<button type="button" class="mui-btn mui-btn-blue mui-btn-block" onclick="scanPicture();">从相册选择二维码</button>
+			</div>
+			<div class="fbt ">
+				<button type="button" class="mui-btn mui-btn-danger mui-btn-block mui-action-back">取　 消</button>
+			</div>
+		</div>
+	<script src="../../js/mui.min.js" type="text/javascript" charset="utf-8"></script>	
+	<script type="text/javascript">
+		mui.init({swipeBack: false});
+		
+	    var scan = null;//扫描对象
+		mui.plusReady(function () {
+		  	  startRecognize();
+	     });
+			
+		function startRecognize(){
+			   try{
+				  var filter;
+				 //自定义的扫描控件样式
+				 var styles = {frameColor: "#29E52C",scanbarColor: "#29E52C",background: ""}
+				//扫描控件构造
+				scan = new plus.barcode.Barcode('bcid',filter,styles);
+				scan.onmarked = onmarked; 
+				scan.onerror = onerror;
+				scan.start();
+				//打开关闭闪光灯处理
+				var flag = false;
+				document.getElementById("turnTheLight").addEventListener('tap',function(){
+				   if(flag == false){
+				      scan.setFlash(true);
+				      flag = true;
+				   }else{
+				     scan.setFlash(false);
+				     flag = false;
+				   }
+				});
+			  }catch(e){
+				alert("出现错误啦:\n"+e);
+		     }
+		};
+		function onerror(e){
+			alert(e);
+		};
+		
+		function onmarked( type, result ) {
+				var text = '';
+				switch(type){
+					case plus.barcode.QR:
+					text = 'QR: ';
+					break;
+					case plus.barcode.EAN13:
+					text = 'EAN13: ';
+					break;
+					case plus.barcode.EAN8:
+					text = 'EAN8: ';
+					break;
+				}
+				scan.cancel();
+                scan.close();
+                var view=plus.webview.getWebviewById("view/login/regist.html");//这个HBuilder在只有两个页面之间的时候可以用
+				 mui.fire(view,'doit',{  
+	             	result:result
+	             });  
+				mui.back();
+
+				
+		};	
+			    
+		// 从相册中选择二维码图片 
+		function scanPicture() {
+		    plus.gallery.pick(function(path){
+			    plus.barcode.scan(path,onmarked,function(error){
+					plus.nativeUI.alert( "无法识别此图片" );
+				});
+		    },function(err){
+		        
+		    });
+		}	    
+			    
+		</script>
+
+	</body>
+
+</html>

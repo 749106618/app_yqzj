@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../../../css/self/setting.css"/>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">修改密码</h1>
+		</header>
+		<!--修改密码-->
+		<div class="mui-content">						
+			<form class="mui-input-group">							
+				<div class="mui-input-row">
+					<label>旧密码</label>
+					<input type="text" class="mui-input-clear" id="oldPwd" placeholder="请输入原始密码">
+				</div>
+				<div class="mui-input-row">
+					<label>新密码</label>
+					<input type="password" class="mui-input-clear" id="newPwd" placeholder="请输入新密码">
+				</div>
+				<div class="mui-input-row">
+					<label>确定新密码</label>
+					<input type="password" class="mui-input-clear" id="confirmPwd" placeholder="请再次输入新密码">
+				</div>
+				<div class="mui-content-padded">		
+					<button id="clickUpdatepwd" type="button" class="mui-btn mui-btn-block mui-btn-primary" @tap="clickUpdatepwd()">确定修改</button>
+				</div>
+			</form>
+		</div>
+		<script src="../../../../js/mui.min.js"></script>
+		<script src="../../../../js/api.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+		mui.init({swipeBack: true});
+		
+		var userId = '';
+		mui.plusReady(function(){
+			userId = plus.storage.getItem(sign_user_id);
+		})
+		
+		/*修改密码*/
+		document.getElementById("clickUpdatepwd").addEventListener("tap",function(){
+				var oldPwd = document.getElementById("oldPwd").value;
+				
+				if(oldPwd.trim()==''||oldPwd==null){
+					mui.toast("请输入原始密码！");
+					return;
+				}
+				
+				var newPwd = document.getElementById("newPwd").value;
+				if(newPwd.trim()==''||newPwd==null){
+					mui.toast("请输入新密码！");
+					return;
+				}
+				
+				var confirmPwd = document.getElementById("confirmPwd").value;
+				
+				if(newPwd.trim()!=confirmPwd.trim()){
+					mui.toast("两次密码输入不一致，请检查！");
+					return;
+				}
+			
+			
+				mui.post(httpUrl,{
+					method:'user00003',
+					module:userApi,
+					requestId:requestId,
+					sign:signMd5,
+					timeStamp:timeStamp,
+					id:userId,
+					oldPwd:oldPwd,
+					newPwd:newPwd
+				},function(data){
+					if(data.respCode=='0000'){
+						var list = plus.webview.currentWebview().opener();　　　　
+                        //refresh是A页面自定义事件
+                        mui.fire(list, 'refreshSetting');
+						var targetUser = plus.webview.getWebviewById("view/self/self.html");
+						mui.fire(targetUser, "refreshUser", {content:"刷新个人中心"});
+						mui.toast("修改成功");
+						mui.back();
+						return ;
+					}
+					mui.toast(data.respMsg)
+				},'json'
+					
+				)
+		})
+		</script>
+	</body>
+
+</html>

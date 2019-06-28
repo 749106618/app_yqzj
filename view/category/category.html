@@ -1,0 +1,185 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../iconfont/iconfont.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="../../css/styleOld.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/allOld.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/base.css"/>
+		<style>
+			body,.fixed-header,.mui-content{background-color: #fff;}
+			.mui-row.mui-fullscreen>[class*="mui-col-"] {height: 100%;}
+			.mui-col-xs-3,.mui-control-content {overflow-y: auto;height: 100%;}
+			.mui-segmented-control .mui-control-item {line-height: 50px;width: 100%;}
+			.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active {background-color: #fff;}
+			.mui-bar-nav~.mui-content{margin-bottom: 0rem;margin-top: .1rem;}
+			.top-sch-box{background:#e6e6e6;color: #FFFFFF;}
+			.mui-segmented-control.mui-segmented-control-inverted.mui-segmented-control-vertical .mui-control-item{margin: .7rem auto;border-radius: 28px;width: 86%;line-height: 2;padding: .05rem 0;}
+		</style>
+</head>
+<body>
+  <header class="mui-bar mui-bar-nav" id="header">    	
+     		<div class="top-sch-box flex-col">
+	            <div class="centerflex">
+	                <i class="fdj iconfont icon-sousuo"></i>
+	                <div class="sch-txt" id="serach">搜索宝贝 领券省钱 分享赚钱</div>
+	            </div>
+	       </div>
+    </header>
+  <div class="mui-content mui-row mui-fullscreen"> 
+   <div class="mui-col-xs-3" id="segmentedControls"> 
+   	<script type="text/html" id="category">
+	    <div class="mui-segmented-control mui-segmented-control-inverted mui-segmented-control-vertical">
+	    		{{each result}}
+	    			{{if $index==0}}
+	     				<a class="mui-control-item mui-active" id="{{$value.id}}" href="#">{{$value.name}}</a>
+	     			{{else}}
+	     				<a class="mui-control-item " id="{{$value.id}}" href="#">{{$value.name}}</a>
+	     			{{/if}}
+	     		{{/each}}
+	    </div> 
+	    </script>
+   </div> 
+   <div id="segmentedControlContents" class="mui-col-xs-9" style="border-left: 1px solid #c8c7cc;">
+	   	<script type="text/html" id="categoryList">
+			    <div id="content1" class="mui-control-content mui-active">
+				     <ul id="list" class="fastion-plist mui-row  mui-table-view mui-grid-view">
+				     	{{each result}}
+					      <li class="mui-col-xs-4 mui-table-view-cell" id="{{$value.id}}" data="{{$value.name}}">
+					      	<img class="figure" data-lazyload="" src="{{$value.icon}}" />{{$value.name}}
+					      </li>
+					    {{/each}}
+				     </ul>
+			    </div>
+	    </script>
+   </div> 
+  </div>
+<script src="../../js/rem.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/mui.min.js"></script>
+<script src="../../js/template-web.js"></script>
+<script src="../../js/api.js" type="text/javascript" charset="utf-8"></script>
+		<script>
+			
+			mui.init({
+				swipeBack:false,
+				keyEventBind: {
+					backbutton: true //开启back按键监听
+				}
+			});
+			
+			var userId = '';
+			
+			
+			mui.plusReady(function(){
+				//去掉滚动条
+				plus.webview.currentWebview().setStyle({
+					scrollIndicator: 'none'
+				});
+				
+				
+				userId = plus.storage.getItem("userId");
+				/**
+				 * 主菜单
+				 */
+				request_category(userId,'',document.getElementById("segmentedControls"),'category');
+				
+				/**
+				 * 列表
+				 */
+				request_category(userId,'1',document.getElementById("segmentedControlContents"),'categoryList');
+				
+				/**
+				 * 主菜单点击事件
+				 */
+				mui("#segmentedControls").on("tap",".mui-control-item",function(){
+					userId = plus.storage.getItem(sign_user_id);
+					var pid = this.getAttribute("id");
+					request_category(userId,pid,document.getElementById("segmentedControlContents"),'categoryList');
+				})
+				
+				
+				
+				mui("#segmentedControlContents").on("tap","li",function(){
+					userId = plus.storage.getItem(sign_user_id);
+					
+					if(userId==''||userId==null){
+						open_login();
+						return;
+					}
+					var categoryId = this.getAttribute("id");
+					var title = this.getAttribute("data");
+					
+					mui.openWindow({
+						id:'/view/goods/goodsList.html',
+						url:'/view/goods/goodsList.html',
+						show:{
+							aniShow:'slide-in-right'
+						},
+			            waiting: {
+			                 autoShow: false //自动显示等待框，默认为true
+			            },
+			            extras:{
+							categoryId:categoryId,
+							title:title
+						}
+					})
+					
+				})
+				
+				
+				
+				document.getElementById("serach").addEventListener("tap",function(){
+					document.activeElement.blur();
+					mui.openWindow({
+						url:'/view/search/search.html',
+						id: 'view/search/search.html',
+						show:{
+							aniShow:'slide-in-right'
+						},
+			            waiting: {
+			                 autoShow: false //自动显示等待框，默认为true
+			            }
+					})
+				})
+				
+				/**
+				 * 监听页面刷新
+				 */
+				window.addEventListener('refreshCatgory', function(e){//执行刷新
+					userId = plus.storage.getItem(sign_user_id);
+					//返回true,继续页面关闭逻辑
+					return true;
+	            });
+				
+			})
+			
+			
+			function request_category(userId,pid,obj,htmlId){
+				mui.post(httpUrl,{
+					method:'goods00002',
+					module:goodApi,
+					requestId:requestId,
+					sign:signMd5,
+					timeStamp:timeStamp,
+					pid:pid,
+					uid:userId
+					},function(data){
+						if(data.respCode=='0000'){
+							var html = template(htmlId,data);
+							obj.innerHTML = html;
+						}
+					},'json'
+				);
+			}
+			
+			
+			
+		</script>
+
+	</body>
+
+</html>

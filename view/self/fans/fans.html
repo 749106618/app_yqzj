@@ -1,0 +1,155 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<style>
+			body{background: #FFFFFF;}
+			.mui-control-content{
+				background-color: white;
+				min-height: 215px;
+				background: #FFFFFF;
+			}
+			.mui-segmented-control{border: 1px solid #d5d5d8;}
+			.mui-segmented-control .mui-control-item{border-left:1px solid #dfdfdf; color: #000000;}
+			.mui-control-content .mui-loading {
+				margin-top: 50px;
+			}
+			.mui-slider .mui-segmented-control.mui-segmented-control-inverted~.mui-slider-group .mui-slider-item{border-bottom: 0;}
+			.mui-table-view{border-bottom: 1px #dadadd solid;}
+			.mui-content,.mui-bar{background-color: #FFFFFF;}
+			.mui-segmented-control .mui-control-item.mui-active{background-color: #fd3862;}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">我的粉丝</h1>
+		</header>
+		
+		<div class="mui-content" id="content">
+				<div id="sliderSegmentedControl" class="mui-segmented-control">
+					<a class="mui-control-item mui-active" href="#item1mobile">全部粉丝</a>
+					<a class="mui-control-item" href="#item2mobile">直接粉丝</a>
+					<a class="mui-control-item" href="#item3mobile">间接粉丝</a>
+				</div>
+					<div id="item1mobile" class="mui-slider-item mui-control-content mui-active">
+						<ul class="mui-table-view">
+						    <li class="mui-table-view-cell mui-media" v-for="fan in fansAll">
+						        <a href="javascript:;">
+						            <img class="mui-media-object mui-pull-left" src="../../../images/self/img_default_avatar@3x.png">
+						            <div class="mui-media-body">
+						               {{fan.nickName}}
+						               <span class="mui-badge mui-badge-warning">{{fan.rankName}}</span>
+						                <p class="mui-ellipsis">{{fan.phone}} <span class="mui-pull-right">{{fan.createDay}}</span></p>
+						            </div>
+						        </a>
+						    </li>
+						</ul>
+					</div>
+					
+					<div id="item2mobile" class="mui-slider-item mui-control-content">
+						<ul class="mui-table-view">
+							 <li class="mui-table-view-cell mui-media" v-for="fan in fansDirect">
+						        <a href="javascript:;">
+						            <img class="mui-media-object mui-pull-left" src="../../../images/self/img_default_avatar@3x.png">
+						            <div class="mui-media-body">
+						               {{fan.nickName}} <span class="mui-badge mui-badge-warning">{{fan.rankName}}</span>
+						                <p class="mui-ellipsis">{{fan.phone}} <span class="mui-pull-right">{{fan.createDay}}</span></p>
+						                
+						            </div>
+						        </a>
+						    </li>
+						</ul>
+					</div>
+					<div id="item3mobile" class="mui-slider-item mui-control-content">
+						<ul class="mui-table-view" v-if="fansIndirect!=''">
+							 <li class="mui-table-view-cell mui-media" v-for="fan in fansIndirect">
+						        <a href="javascript:;">
+						            <img class="mui-media-object mui-pull-left" src="../../../images/self/img_default_avatar@3x.png">
+						            <div class="mui-media-body">
+						               {{fan.nickName}} <span class="mui-badge mui-badge-warning">{{fan.rankName}}</span>
+						                <p class="mui-ellipsis">{{fan.phone}} <span class="mui-pull-right">{{fan.createDay}}</span></p>
+						            </div>
+						        </a>
+						    </li>
+						</ul>
+
+					</div>
+
+
+		</div>
+		
+		<script src="../../../js/mui.min.js"></script>
+		<script src="../../../js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../../js/api.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init({
+                    beforeback: function() {
+						var targetUser = plus.webview.getWebviewById("view/self/self.html");
+						mui.fire(targetUser, "refreshUser", {content:"刷新个人中心"});
+						var refreshRedPck = plus.webview.getWebviewById("view/self/welfare/redpack.html");
+						mui.fire(refreshRedPck, "refreshRedPck", {content:"刷新红包页"});
+						return true;
+					}
+				});
+			
+			var vm = new Vue({
+				el:'#content',
+				data:{
+					fansAll:[],
+					fansDirect:[],
+					fansIndirect:[]
+				}
+			})
+			
+			
+			mui.plusReady(function(){
+				
+				var userId = plus.storage.getItem(sign_user_id);
+					
+				getFans(httpUrl,0,userId);
+				getFans(httpUrl,1,userId);
+				getFans(httpUrl,2,userId);
+				
+				//去掉滚动条
+				plus.webview.currentWebview().setStyle({
+					scrollIndicator: 'none'
+				});
+			})
+			
+			
+			function getFans(httpUrl,type,userId){
+				mui.post(httpUrl,{
+						method:'user0008',
+						module:userApi,
+						requestId:requestId,
+						sign:signMd5,
+						timeStamp:timeStamp,
+						type:type,
+						id:userId
+					},function(res){
+						if(res.respCode=='0000'){
+							switch(type){
+								case 0:
+									vm.fansAll = res.result;
+									break;
+								case 1:
+									vm.fansDirect = res.result;
+									break;
+								case 2:
+									vm.fansIndirect = res.result;
+									break;
+							}
+						}
+					},'json'
+				);
+			}
+		</script>
+	</body>
+
+</html>

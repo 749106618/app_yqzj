@@ -1,0 +1,162 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../../iconfont/iconfont.css"/>
+		<link rel="stylesheet" type="text/css" href="../../../css/all.css"/>
+		<link rel="stylesheet" type="text/css" href="../../../css/self/orderInquiry.css"/>	
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">订单查询</h1>
+		</header>
+		<div class="mui-content">
+			<div class="orderInquiry">
+				<div class="mui-col-xs-10 centerflex">
+					<input type="search" class="mui-input-clear" id="orderNo" placeholder="请输入或者粘贴淘宝订单号">		
+					<button type="button" class="mui-btn mui-btn-blue" id="searchButton">搜索</button>
+				</div>				
+			</div>
+			
+			<div class="mui-card">
+				<div class="mui-card-header mui-text-center">
+					<h4>如何获取订单编号</h4>
+				</div>
+				<div class="mui-card-content centerflex  mui-text-center">
+					<div class="mui-col-xs-6 mui-content-padded">
+						<span>打开手机“淘宝”APP</span>
+						<p>点击我的淘宝—查看全部订单</p>
+						<img src="../../../images/self/2.png" width="100%"/>
+					</div>
+					<div class="mui-col-xs-6 mui-content-padded">
+						<span>复制订单编号</span>
+						<p>复制订单号，粘贴在上方搜索</p>
+						<img src="../../../images/self/dingd.png" width="100%"/>
+					</div>
+				</div>
+				<div class="mui-card-footer">
+					<h5><i>•</i>查询规则</h5>
+					<p>1.购买人没同步的订单可通过订单查询找回；</p>
+					<p>2.当查找人查找到订单，并且该订单在订单库确实找不到归属时，该订单归属到查找人；</p>
+					<p>3.当有多个用户输入同一订单号，以第一个输入人为准；</p>
+					<p>4.已归属的订单不支持继续查询；</p>
+					<p>5.建议购买人自查，运营商帮助超级会员查询时，不要点击确认找回，可让购买人自查并找回；</p>
+					<p>6.收益将按查找人的当前的用户关系进行归属。</p>
+				</div>
+			</div>
+		</div>
+		<script src="../../../js/mui.min.js"></script>
+		<script src="../../../js/api.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../../js/rem.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+		mui.init({
+                    beforeback: function() {
+						var inputs = document.getElementById("orderNo") 
+						var orderNo = inputs.value;
+						if(orderNo.trim()!=''){
+							inputs.value = '';
+						}
+						return true;
+					}
+			})
+			
+			var userId = '';
+			
+			mui.plusReady(function(){
+				userId = plus.storage.getItem(sign_user_id);
+			})
+			
+			document.getElementById("searchButton").addEventListener("tap",function(){
+				userId = plus.storage.getItem(sign_user_id);
+				var orderNo = document.getElementById("orderNo").value;
+				if(orderNo.trim()==''){
+					mui.toast("请输入正确的订单号");
+					return;
+				}
+				/***
+				 * 订单查询
+				 */
+				mui.getJSON(httpUrl,{
+					   method:'trade00003',
+	                   module:tradeApi,
+	                   requestId:requestId,
+					   sign:signMd5,
+					   timeStamp:timeStamp,
+	                   uid:userId,
+	                   orderNo:orderNo
+					},function(data){
+						/**
+						 * 查询成功
+						 */
+						if(data.respCode=='0000'){
+							
+							mui.openWindow({
+								id:'/view/self/order/success.html',
+								url:'/view/self/order/success.html',
+								extras:{
+									trade:data.result
+								},
+				       			show:{
+									aniShow:'slide-in-right'
+								},
+					            waiting: {
+					                 autoShow: false //自动显示等待框，默认为true
+					            }
+							})
+							return;
+						}
+						/**
+						 * 订单已经存在
+						 */
+						if(data.respCode=='0001'){
+							
+							mui.openWindow({
+								id:'/view/self/order/existOrder.html',
+								url:'/view/self/order/existOrder.html',
+				       			show:{
+									aniShow:'slide-in-right'
+								},
+					            waiting: {
+					                 autoShow: false //自动显示等待框，默认为true
+					            }
+							})
+							return;
+						}
+						
+						/***
+						 * 订单不存在
+						 */
+						if(data.respCode=='0002'){
+							mui.openWindow({
+								id:'/view/self/order/error.html',
+								url:'/view/self/order/error.html',
+								extras:{
+										trade:data.respMsg
+								},
+				       			show:{
+									aniShow:'slide-in-right'
+								},
+					            waiting: {
+					                 autoShow: false //自动显示等待框，默认为true
+					            }
+							})
+							return;
+						}
+						/**
+						 * 服务器查询异常
+						 */
+						mui.toast(data.respMsg);
+					});
+	           
+			})
+			
+		</script>
+	</body>
+
+</html>

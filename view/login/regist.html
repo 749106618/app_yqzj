@@ -1,0 +1,290 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../iconfont/iconfont.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../css/all.css"/>
+		 <script  src="../../js/rem.js"></script>  
+		<style type="text/css">
+			body,.mui-content{background: #fff;}
+			.mui-content-padded{padding: 15px;margin: 0;}
+			.mui-input-group .mui-input-row{background:rgba(255,255,255,1);box-shadow:0px 3px 7px 0px rgba(0, 0, 0, 0.18);border-radius:6px;border-bottom:1px #ff0066 solid;margin: 10px;}
+			.mui-btn-blue, .mui-btn-primary, input[type=submit]{background:linear-gradient(0deg,rgba(253,90,114,1),rgba(253,43,91,1));border-radius:40px;border: none;margin-top:.5rem;	}	
+			.mui-btn-block{padding: .3rem 0;}
+			.mui-input-row label{padding: .2rem;text-align: center;}
+			.mui-input-row img{width: .42rem;height: .6rem;margin: .2rem .4rem;}
+			.mui-input-row .mui-btn-outlined{position: absolute;right: 10px;width: 90px;text-align: center;color: #888888;padding: 4px 0;top: 8px;border-radius: 10px;border: 1px #ff0066 solid;}
+			.centerflex .iconfont { font-size: 0.55rem;margin-right: 10px;color: #cccccc;margin-left: 17px;}
+			
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">用户注册</h1>
+		</header>
+		<div class="mui-content">
+			<form class="mui-input-group">
+				<div class="mui-content-padded">
+					<h3>用户注册</h3>
+				</div>
+				<div class="mui-input-row centerflex">	
+					<span class="mui-icon iconfont icon-shouji"></span>
+					<input id="phone" type="tel" maxlength="11" class="mui-input-clear" placeholder="请输入您的手机号码">
+				</div>	
+				<div class="mui-input-row centerflex">
+					<span class="mui-icon iconfont icon-yanzhengma"></span>
+					<input id="smsCode" type="number" class="mui-input-clear mui-input" placeholder="请输入您的验证码">
+					<button type="button" class="mui-btn mui-btn-outlined" id="smsCodeFun">
+						<span id="text">获取验证码</span>
+					</button>
+				</div>
+				<div class="mui-input-row centerflex">
+					<span class="mui-icon iconfont icon-mima54"></span>
+					<input id="password" type="password" class="mui-input-clear mui-input" placeholder="请输入您的密码">
+				</div>
+				<div class="mui-input-row centerflex">					
+					<input id="invite" type="text" class="mui-input-clear mui-col-sm-10" placeholder="请输入邀请码或手机号码" />
+					<span id="saoma" class="mui-icon iconfont icon-saoma mui-col-sm-2 mui-pull-right"></span>
+					<span class=""></span>
+				</div>
+				<div class="mui-content-padded">					
+					<input type="checkbox" id="userAgreement" checked="checked"/>
+					<span id="openAgreement">我已阅读用户协议</span>
+				</div>
+				<div class="mui-content-padded">
+					<button id='regist' type="button" data-loading-text="注册中" class="mui-btn mui-btn-block mui-btn-primary" >注册</button>
+				</div>
+			</form>
+		</div>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/api.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init({swipeBack: false});
+			
+			mui.plusReady(function(){
+				
+				/**
+				 * 监听登录或者注册成功返回
+				 */
+				window.addEventListener('loginSuccess', function(e){//执行刷新
+					mui.back();
+					//返回true,继续页面关闭逻辑
+					return true;
+	            });
+				
+				window.addEventListener('doit', function(event){
+					var result = event.detail.result;
+					if(result.indexOf("tqq.kaypay.cn/user/regist.htm")==-1){
+						mui.toast("亲，您扫的二维码，不符合规则");
+						return ;
+					}
+					
+					var stat = result.indexOf("code=")+5;
+					var end = result.indexOf("&");
+					result = result.substr(stat,end-stat);
+					document.getElementById("invite").value = result;
+					
+
+				});
+			})
+			
+			
+			/*注册*/
+		document.getElementById("regist").addEventListener('tap',function(){
+			var invite = document.getElementById("invite").value;
+			var tel = document.getElementById("phone").value;
+			var smsCode = document.getElementById("smsCode").value;
+			var pwd = document.getElementById("password").value;
+			var userAgreement =  document.getElementById("userAgreement");
+       		if(invite==''){
+       			mui.toast("请输入邀请码或者邀请人的手机号码！");
+       			return ;
+       		}
+       		if(tel==''||tel.length<11){
+       			mui.toast("请输入您的手机号码！");
+       			return ;
+       		}	 
+       		if(!(/^1[3456789]\d{9}$/.test(tel))){ 
+		       mui.toast("手机号码有误，请重填");  
+		        return ; 
+		    } 
+       		if(smsCode==''){
+       			mui.toast("请输入验证码！");
+       			return ;
+       		}
+       		
+       		if(!userAgreement.checked){
+				mui.toast("请先同意用户协议");
+				return ;
+			}
+       		mui(this).button('loading');
+		    setTimeout(function() {
+		        mui(this).button('reset');
+		    }.bind(this), 2000);
+
+	       		
+			/*用户注册user00001*/
+				mui.post(httpUrl,{
+					method:'user00001',
+					module:userApi,
+					requestId:requestId,
+					sign:signMd5,
+					timeStamp:timeStamp,
+					phone:tel,
+					smsCode:smsCode,
+					pwd:pwd,
+					inviteCode:invite,
+					orgId:''
+				},function(data){
+					if(data.respCode=='0000'){
+						
+						/***
+						 * 如果用户注册成功，就根据用户号码登录
+						 * 同时就直接返回到他来时的请求路径
+						 * 用户密码登录
+						 */
+						mui.post(httpUrl,{
+							   method:'user00002',
+			                   module:'user-api',
+			                   requestId:'1527765597521',
+							   sign:'089050fe2fe964292a8b996d25c16014',
+							   timeStamp:'20180531191957',
+			                   phone:tel,
+			                   pwd:pwd
+							},function(data){
+								if(data.respCode=='0000'){
+									plus.storage.setItem(sign_user_id,data.result.id);
+									if(plus.storage.getItem(sign_user_id)!=''){
+										var targetHome = plus.webview.getWebviewById("view/home/home.html");
+										mui.fire(targetHome, "refreshHome", {content:"刷新首页"});
+										
+										var targetUser = plus.webview.getWebviewById("view/self/self.html");
+										mui.fire(targetUser, "refreshUser", {content:"刷新个人中心"});
+										
+										var targetCategory = plus.webview.getWebviewById("view/category/category.html");
+										mui.fire(targetCategory, "refreshCatgory", {content:"刷新分类"});
+										
+										var targetSearch = plus.webview.getWebviewById("view/search/search.html");
+										mui.fire(targetSearch, "refreshSearch", {content:"刷新搜索"});
+										
+										var refreshRedPck = plus.webview.getWebviewById("view/self/welfare/redpack.html");
+										mui.fire(refreshRedPck, "refreshRedPck", {content:"刷新红包页"});
+										
+										var targetHome = plus.webview.getWebviewById("login.html");
+										mui.fire(targetHome, "loginSuccess", {content:"用户注册成功"});
+										
+										mui.toast("注册成功");
+										mui.back();
+										return ;
+									}else{
+										mui.toast("亲，您还没给予我们权限哦，在您的手机设置里信任我们");
+									}
+									
+									//console.log(plus.storage.getItem("userId"));
+									return;
+								}
+								mui.toast(data.respMsg);
+								
+							},'json'
+						);
+						return ;
+					}
+					mui.toast(data.respMsg)
+				},'json'
+					
+				)
+		})
+		
+		
+		document.getElementById("smsCodeFun").addEventListener("tap",function(){
+			var phone = document.getElementById("phone").value;
+			if(!(/^1[3456789]\d{9}$/.test(phone))){ 
+		       mui.toast("手机号码有误，请重填");  
+		        return ; 
+		    } 
+			/***
+			 * 获取手机短信验证码
+			 */
+			mui.post(httpUrl,{
+				   method:'system00001',
+                   module:'user-api',
+                   requestId:'1527765597521',
+				   sign:'089050fe2fe964292a8b996d25c16014',
+				   timeStamp:'20180531191957',
+                   type:"2",
+                   orgId:'',
+                   phone:phone,
+                   ip:''
+				},function(data){
+					if(data.respCode=='0000'){
+						mui.toast(data.respMsg);
+						setTimeSms();
+						return;
+					}
+					mui.toast(data.respMsg);
+					
+				},'json'
+			);
+		})
+		
+	       
+	       /*倒计时*/
+	        var countdown=60;
+	        function setTimeSms() {
+	            var text = document.getElementById("text");
+	            if (countdown == 0) {
+	                //text.removeAttribute("disabled");
+	                text.innerHTML = "获取短信";
+	                countdown = 60;
+	            } else {
+	                //text.setAttribute("disabled", true);
+	                text.innerHTML = "重新发送(" + countdown + ")";
+	                countdown--;
+	                setTimeout(function () {
+	                    setTimeSms();
+	                }, 1000)
+	            }
+	        }
+	        
+	        document.getElementById("saoma").addEventListener("tap",function(){
+	        	mui.openWindow({
+	        		id:'barcode_scan.html',
+	        		url:'barcode_scan.html',
+	        		show:{
+						aniShow:'slide-in-right'
+					},
+		            waiting: {
+		                 autoShow: false //自动显示等待框，默认为true
+		            }
+	        	})
+	        })
+	        
+	        
+	        document.getElementById("openAgreement").addEventListener("tap",function(){
+	        	mui.openWindow({
+	        		id:'userPage.html',
+	        		url:'/view/inclued/userPage.html',
+	        		extras:{
+	        			url:htmlUrl+"mobile/agreement.htm",
+	        			title:'用户协议'
+	        		},
+	        		show:{
+						aniShow:'slide-in-right'
+					},
+		            waiting: {
+		                 autoShow: false //自动显示等待框，默认为true
+		            }
+	        	})
+	        })
+	        
+	   	      
+		</script>
+	</body>
+
+</html>

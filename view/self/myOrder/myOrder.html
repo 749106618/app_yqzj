@@ -1,0 +1,236 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+	    <link rel="stylesheet" type="text/css" href="../../../css/base.css"/>
+	    <link rel="stylesheet" type="text/css" href="../../../css/style.css"/>
+		 <style type="text/css">			
+		 	#content .mui-card{border-radius: 10px;}
+			.mui-content>.mui-table-view:first-child{margin-top: 0;}
+			.mui-table-view .mui-media-object{max-width: 2.5rem;height: 2.5rem;}
+			.mui-card-btn{background: none;border: 1px #8f8f94 solid;padding:0 .2rem;border-radius: 10px;color: #8f8f94;font-size: .32rem;margin-left: .4rem;}
+			h4{color: #000000;font-size: .42rem;}
+			.mui-media-body .mui-pull-left,.mui-media-body p,.mui-table-view-cell.mui-media p span.mui-badge{font-size: .32rem;}
+			.mui-card-header.mui-card-media .mui-media-body{margin-left: 0;}
+			body{background: #efeff4;}
+		</style>
+
+	</head>
+
+	<body>
+	<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+	  <div class="mui-scroll">	
+			<header class="mui-bar mui-bar-nav">
+			    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			     <h1 class="mui-title" id="titleText">我的订单</h1>
+			</header>
+			
+			<div class="mui-content" id="content" v-cloak>
+				
+				<div v-if="goods!=''" class="mui-card" v-if="goods!=null" v-for="(good,index) in goods">
+					<div class="mui-card-header mui-card-media" style="border-bottom: 2px #efeff4 solid;">	
+						<div class="mui-media-body mui-content-padded" style="padding-left: 0;">
+							<span class="mui-pull-left" style="margin-left: 0;font-size: .40rem;">NO:  {{good.thirdOrderNo}}</span> 
+							<button type="button" @tap="copyShareUrl(good.thirdOrderNo)" class="mui-btn mui-card-btn mui-pull-right" v-text="'复制'"></button>
+						</div>	
+					</div>
+					<div class="mui-card-content" >
+						<ul class="mui-table-view">
+					        <li class="mui-table-view-cell mui-media" >
+						        <a @tap="open_details(good)" :id="good.goodId" @tap="open_details(good)">
+						            <img class="mui-media-object mui-pull-left" :src="good.imgSrc">
+						            <div class="mui-media-body mui-ellipsis-2">
+					                	{{good.goodsName}}				               
+						            </div>
+						            <div class="mui-media-body">
+										<p>Time: {{good.createDateStr}}</p>
+									</div>
+									<p style="margin-top: 20px;">										
+										<span v-if="good.status=='3'" class="mui-badge mui-badge-warning mui-pull-left">订单已失效</span>
+										<span v-else class="mui-badge mui-badge-warning mui-pull-left">订单金额 ¥ {{good.amount}}</span>
+										<span class="mui-badge mui-pull-right" style="margin-right: .4rem;">分润￥ {{good.fee}}</span>
+									</p>
+						        </a>
+						    </li>
+					        
+					    </ul>
+					</div>
+				</div>	
+				<div v-if="something==''" class="mui-text-center">
+					<p style="margin-top: 200px;">亲，您还没有订单哦</p>
+				</div>
+			</div>
+		</div>		
+	</div>			
+			
+			
+		<script src="../../../js/rem.js"></script>
+		<script src="../../../js/mui.min.js"></script>
+		<script src="../../../js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../../js/api.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../../js/constant.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init({
+				swipeBack: true ,//启用右滑关闭功能
+				pullRefresh: {
+					container: '#pullrefresh',
+					down: {
+						  style:'circle',   //必选，下拉刷新样式，目前支持原生5+ ‘circle’ 样式
+					      color:'#2BD009',  //可选，默认“#2BD009” 下拉刷新控件颜色
+					      height:'50px',    //可选,默认50px.下拉刷新控件的高度,
+					      range:'100px',    //可选 默认100px,控件可下拉拖拽的范围
+					      offset:'0px',     //可选 默认0px,下拉刷新控件的起始位置
+					      auto: false,       //可选,默认false.首次加载自动上拉刷新一次
+						callback: pulldownRefresh
+					},
+					up: {
+						height:10,
+						contentinit:'正在加载中...',
+						contentrefresh: '正在加载中...',
+						contentnomore:'--  已为您加载全部   --',
+						callback: pullupRefresh
+					}
+				}
+			});
+			
+			var vm = new Vue({
+				el:'#content',
+				data:{
+					goods : [],
+					something:'1'
+				}
+			})
+			
+			
+			mui.plusReady(function(){
+				
+				var userId = plus.storage.getItem(sign_user_id);
+				
+				myOrder(userId,1,pageSize);
+				//去掉滚动条
+				plus.webview.currentWebview().setStyle({
+					scrollIndicator: 'none'
+				});
+				
+				
+			})
+			
+			
+			var titleNView = {  
+			    backgroundColor: '#f7f7f7',//导航栏背景色  
+			    titleText: '',//导航栏标题  
+			    titleColor: '#000000',//文字颜色  
+			    type:'transparent',//透明渐变样式  
+			    autoBackButton: true,//自动绘制返回箭头  
+			    splitLine:{//底部分割线  
+			        color:'#cccccc'  
+			    }  
+			}  
+			function open_details(item) {
+				plus.nativeUI.showWaiting("",{background:"#a3a4a4",color:"#FFFFFF"});
+				var userId = plus.storage.getItem(sign_user_id);
+				mui.post(httpUrl,{
+						method:'goods00013',
+						module:goodApi,
+						requestId:requestId,
+						sign:signMd5,
+						timeStamp:timeStamp,
+						thirdId:item.thirdId,
+						uid:userId
+					},function(res){
+						titleNView.titleText = res.result.title;
+						plus.nativeUI.closeWaiting();
+						mui.openWindow({
+							id:'view/goods/details/goodsDetails.html',
+							url:'/view/goods/details/goodsDetails.html',
+				   			extras:{
+								goods:res.result,
+								goodsList:null
+							},
+							show:{
+								aniShow:'slide-in-right'
+							},
+				            waiting: {
+				                 autoShow: false //自动显示等待框，默认为true
+				            },
+				             styles:{  
+						        titleNView:titleNView,
+						        popGesture: 'none'
+						    } 
+						})
+						
+					},'json'
+				);
+					
+			}
+			
+			var pageNumber = 1;
+			var pageSize = 20;
+			var pageCount =0;
+			
+			/**
+			 * 下拉刷新
+			 */
+			function pulldownRefresh(){
+				var userId = plus.storage.getItem(sign_user_id);
+				myOrder(userId,1,20);
+				mui('#pullrefresh').pullRefresh().endPulldown();
+			}
+			
+			/**
+			 * 上拉加载更多
+			 */
+			function pullupRefresh(){
+				var userId = plus.storage.getItem(sign_user_id);
+				pageNumber = pageNumber + 1;
+				
+				myOrder(userId,pageNumber,pageSize);
+				if(pageNumber >= pageCount){
+					 this.endPullupToRefresh(true);
+				}else{
+				 	this.endPullupToRefresh(false);
+				}
+			}
+			
+			
+			function myOrder(uid,pageNumber,pageSize){
+				mui.post(httpUrl,{
+						method:'trade00001',
+						module:tradeApi,
+						requestId:requestId,
+						sign:signMd5,
+						timeStamp:timeStamp,
+						pageNumber:pageNumber,
+						pageSize:pageSize,
+						keyword:'',
+						status:'',
+						uid:uid,
+						strarDate:'',
+						endDate:'',
+						goodsName:''
+					},function(res){
+						if(res.respCode=='0000'){
+							pageCount = Math.ceil(res.result.result.length/pageSize);
+							if(pageNumber==1){
+								vm.goods = [];
+								vm.goods = res.result.result;
+								vm.something = vm.goods==''?'':'1';
+							}else{
+								vm.goods = vm.goods.concat(res.result.result);
+							}
+						}
+					},'json'
+				);
+			}
+			
+			
+			
+			
+		</script>
+	</body>
+
+</html>

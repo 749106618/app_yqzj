@@ -1,0 +1,17 @@
+
+.mui-content .orderInquiry{background: #FFEAED;padding: .8rem 0;}
+.mui-content .mui-col-xs-10{margin:0 auto;}
+.mui-content .mui-col-xs-10 input{border-radius: 0;border-bottom-left-radius: 16px;border-top-left-radius: 16px;background: #fff;}
+.mui-content .mui-col-xs-10 #searchButton{border-radius: 0;border-bottom-right-radius: 16px;border-top-right-radius: 16px;}
+.mui-content .mui-col-xs-10 button{padding: 8px 15px;margin-top: -14px;}
+.mui-card .mui-col-xs-6.mui-content-padded{height:7rem;}
+.mui-bar-nav{background: #fff;}
+/**/
+.mui-card{border-radius: 10px;}
+.mui-card-header,.mui-card-footer{display: inherit;}
+.mui-col-xs-6.mui-content-padded p{font-size: .36rem;}
+.mui-card-footer h5{color: #333;}
+.mui-card-footer h5 i{color: #EF3D3D;margin-right: .2rem;}
+.mui-card-footer p{text-align: left;font-size: .36rem;margin-bottom: 0;}
+.mui-btn-blue, .mui-btn-primary, input[type=submit]{background:linear-gradient(0deg,rgba(253,90,114,1),rgba(253,43,91,1));border-radius:40px;border: none;margin-top:.5rem;	padding: .3rem 0;}	
+.mui-card-header.mui-text-center img{float: inherit;width:80px;height: 80px;}

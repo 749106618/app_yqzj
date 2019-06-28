@@ -1,0 +1,215 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<style type="text/css">
+			.mui-bar .mui-btn-block{top:0}
+		</style>
+	</head>
+
+	<body>
+		
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">我要分享</h1>
+		</header>
+		
+		<div class="mui-content" id="content">
+			<div class="mui-content-padded" >
+				<p class="mui-text-center mui-ellipsis-2 mui-text-center">
+					<p class="mui-text-center">分享专属海报，新用户可免邀请码注册，关系自动绑定</p>
+				</p>
+			   	<div id="slider" class="mui-slider" >					
+				    <div class="mui-slider-group mui-slider-loop">
+				  
+					    <div class="mui-slider-item mui-slider-item-duplicate" v-for="(img,index) in images" v-if="img.lengths === (index+1)">
+					    	      <a href="#">
+					    	        <img :src="img.path"/>
+					    	      </a>
+			    	    </div>
+		    	  	 	 <div class="mui-slider-item" v-for="img in images">
+				    	      <a href="#">
+				    	        <img :src="img.path"/>
+				    	      </a>
+			    	    </div>
+			    	    <div class="mui-slider-item mui-slider-item-duplicate" v-for="(img,index) in images" v-if="0 === index">
+			    	      <a href="#">
+			    	        <img :src="img.path"/>
+			    	      </a>
+			    	    </div>
+				    </div>
+		    	    <div class="mui-slider-indicator" >
+		    	  		<a v-for="(img,index) in images" >
+		    	    		<div v-if="index===0" class="mui-indicator mui-active" ></div>
+		    	    		<div v-else class="mui-indicator" ></div>
+		    	    	</a>
+		    	    </div>  
+				</div>
+			</div>
+				<nav class="mui-bar mui-bar-tab">
+				    <a class="mui-tab-item mui-content-padded">
+				    	<div class="mui-content-padded">
+				    		<button type="button" id="copyBtn" class="mui-btn mui-btn-danger mui-btn-block">复制邀请码</button>
+				    	</div>				       
+				    </a>
+				    <a class="mui-tab-item">
+				    	<div class="mui-content-padded">
+				    		 <button type="button" id="share" class="mui-btn mui-btn-green mui-btn-block">分享专属海报</button>
+				    	</div>				      
+				    </a>
+				</nav>
+			
+		</div>
+		
+		
+		<script src="../../../js/mui.min.js"></script>
+		<script src="../../../js/api.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../../js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../../js/constant.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../../js/rem.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init({swipeBack:true});
+			
+			var vm = new Vue({
+				el:'#content',
+				data:{
+					images:[],
+					inviteCode:''
+				}
+			})
+			
+			var shares = {};
+			var current_num = 0;
+			
+			mui.plusReady(function(){
+				//去掉滚动条
+				plus.webview.currentWebview().setStyle({
+					scrollIndicator: 'none'
+				});
+				var userId = plus.storage.getItem(sign_user_id);
+				
+				circle00004Data.uid = userId;
+				
+				mui.post(httpUrl,circle00004Data,function(res){
+						if(res.respCode=='0000'){
+							var img = res.result.shareUrl.split(",");
+							vm.images = convertGoodsDetaImage(img,img.length);
+							
+							vm.inviteCode = res.result.inviteCode;
+							
+						}
+					},'json'
+				);
+				
+				setTimeout(function(){
+					 var gallery = mui('#slider');
+						  gallery.slider({
+						  interval:2000	//自动轮播周期，若为0则不自动播放，默认为0；
+					});
+				},3000);
+				
+				
+				document.getElementById("copyBtn").addEventListener("tap",function(){
+					copyShareUrl(vm.inviteCode);
+				})
+				
+				/**
+				 * 获取滚动图片角标
+				 */
+			　 document.querySelector('.mui-slider').addEventListener('slide', function(event) {
+			　　　　current_num = event.detail.slideNumber;
+			　　});
+				
+				/**
+				 * 点击分享时根据角标保存到本地相册
+				 */
+				function saveImg(){
+					
+					saveImg(vm.images[current_num].path);
+				}
+				
+				plus.share.getServices(function(s) {
+					if (s && s.length > 0) {
+						for (var i = 0; i < s.length; i++) {
+							var t = s[i];
+							shares[t.id] = t;
+						}
+					}
+				}, function() {
+					console.log("获取分享服务列表失败");
+				});
+			})
+			
+			
+			
+			
+			//分享链接点击事件
+		document.getElementById("share").addEventListener('tap', function() {
+			var ids = [{
+					id: "weixin",
+					ex: "WXSceneSession"
+				}, {
+					id: "weixin",
+					ex: "WXSceneTimeline"
+				}],
+				bts = [{
+					title: "发送给微信好友"
+				}, {
+					title: "分享到微信朋友圈"
+				}];
+			plus.nativeUI.actionSheet({
+				cancel: "取消",
+				buttons: bts
+			}, function(e) {
+				var i = e.index;
+				if (i > 0) {
+					var s_id = ids[i - 1].id;
+					var share = shares[s_id];
+					if (share) {
+						if (share.authenticated) {
+							shareMessage(share, ids[i - 1].ex);
+						} else {
+							share.authorize(function() {
+								shareMessage(share, ids[i - 1].ex);
+							}, function(e) {
+								console.log("认证授权失败：" + e.code + " - " + e.message);
+							});
+						}
+					} else {
+						mui.toast("无法获取分享服务，请检查manifest.json中分享插件参数配置，并重新打包")
+					}
+				}
+			});
+		});
+		
+		function shareMessage(share, ex) {
+			var msg = {
+				content: "海报分享",
+					pictures: [],
+				extra: {
+					scene: ex
+				}
+			};
+			msg.pictures.push(vm.images[current_num].path);
+			share.send(msg, function() {
+				console.log("分享到\"" + share.description + "\"成功！ ");
+			}, function(e) {
+				console.log("分享到\"" + share.description + "\"失败: " + e.code + " - " + e.message);
+			});
+		}
+		
+			
+			
+			
+			
+
+			
+			
+		</script>
+	</body>
+
+</html>

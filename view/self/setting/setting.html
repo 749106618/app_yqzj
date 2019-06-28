@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>个人设置</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../../css/mui.min.css">
+		<link rel="stylesheet" type="text/css" href="../../../css/mui.poppicker.css" />
+		<link rel="stylesheet" type="text/css" href="../../../css/mui.picker.css" />
+		<link rel="stylesheet" type="text/css" href="../../../css/selfSetting.css" />
+		<link rel="stylesheet" type="text/css" href="../../../css/feedback.css" />
+		<link rel="stylesheet" type="text/css" href="../../../css/self/setting.css" />
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">设置</h1>
+		</header>
+		<div class="mui-content" id="centent">
+			<div class="mui-text-center mui-col-sm-12">
+				<a id="head">
+					<span class="head">
+						<img class="head-img mui-action-preview" id="head-img1" src="../../../images/login/logo.png" />
+					</span>
+					<p>
+						<!--点击修改头像-->
+					</p>
+				</a>
+			</div>
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell">
+					<a class="mui-navigate-right" id="updateName">昵称<span class="mui-pull-right">{{user.nickName}}</span></a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a class="mui-navigate-right" id="showUserPicker" href="#picture">性别
+						<span class="mui-pull-right" v-if="user.sex==0" id="userResult">男</span>
+						<span class="mui-pull-right" v-if="user.sex==1" id="userResult">女</span>
+					</a>
+				</li>
+			</ul>
+			<ul class="mui-table-view">
+				<!--<li class="mui-table-view-cell">
+					<a id="taobaoAuthorize" class="mui-navigate-right">淘宝授权<span class="mui-pull-right"></span></a>
+				</li>-->
+				<li class="mui-table-view-cell">
+					<a id="bindingAlipay" class="mui-navigate-right">绑定支付宝<span class="mui-pull-right">{{user.alipayAccount}}</span></a>
+				</li>
+			</ul>
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell">
+					<a id="clickUpdatepwd" class="mui-navigate-right">修改密码 <span class="mui-pull-right">修改</span></a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a href="#general" class="mui-navigate-right">清除缓存
+						<span id="cache" class="mui-pull-right" style="margin-right: 100px;"></span>
+						<button type="button" id="cleanCache" class="mui-pull-right mui-btn" @tap="cleanCache()">清除缓存</button>
+					</a>
+				</li>
+			</ul>
+			<div class="mui-content-padded">
+				<button type="button" id="loginOut" class="mui-btn mui-btn-primary mui-btn-block">安全退出</button>
+			</div>
+		</div>
+
+		<div id="picture" class="mui-popover mui-popover-action mui-popover-bottom">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell">
+					<a href="#" value="0">男</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a href="#" value="1">女</a>
+				</li>
+			</ul>
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell">
+					<a href="#picture"><b>取消</b></a>
+				</li>
+			</ul>
+		</div>
+
+	</body>
+	<script src="../../../js/rem.js"></script>
+	<script src="../../../js/mui.min.js"></script>
+	<script src="../../../js/mui.view.js"></script>
+	<script src="../../../js/mui.poppicker.js" charset="utf-8"></script>
+	<script src="../../../js/mui.picker.js" charset="utf-8"></script>
+	<script src="../../../js/vue.min.js" charset="utf-8"></script>
+	<script src="../../../js/api.js" type="text/javascript" charset="utf-8"></script>
+
+	<script>
+		mui.init();
+
+		// var showUserPickerButton = document.getElementById('showUserPicker');
+		// showUserPickerButton.addEventListener('tap', function(event) {
+		// 	userPicker.show(function(items) {
+
+		// 	});
+		// 	
+		// }, false);	
+		mui('body').on('tap', '.mui-popover-action li>a', function() {
+			var a = this,
+				parent;
+			//根据点击按钮，反推当前是哪个actionsheet
+			for (parent = a.parentNode; parent != document.body; parent = parent.parentNode) {
+				if (parent.classList.contains('mui-popover-action')) {
+					break;
+				}
+			}
+			//关闭actionsheet
+			mui('#' + parent.id).popover('toggle');
+			if(a.innerHTML == '<b>取消</b>'){
+				return;
+			}
+			var sex = a.innerHTML;
+			var value = a.getAttribute('value');
+			var userResult = document.getElementById('userResult');
+			userResult.innerText = sex;
+			mui.post(httpUrl, {
+				method: 'user00004',
+				module: userApi,
+				requestId: requestId,
+				sign: signMd5,
+				timeStamp: timeStamp,
+				id: vm.user.id,
+				sex: value,
+				nickName: vm.user.nickName
+			}, function(res) {
+				var targetUser = plus.webview.getWebviewById("view/self/self.html");
+				mui.fire(targetUser, "refreshUser", {
+					content: "刷新个人中心"
+				});
+				mui.toast(res.respMsg)
+
+			}, 'json');
+		})
+		var vm = new Vue({
+			el: '#centent',
+			data: {
+				user: {}
+			}
+		})
+
+
+		mui.plusReady(function() {
+			window.addEventListener('refreshSetting', function(e) { //执行刷新
+				/**
+				 * 用户资料
+				 */
+				mui.getJSON(httpUrl, {
+					method: 'user00010',
+					module: userApi,
+					requestId: requestId,
+					sign: signMd5,
+					timeStamp: timeStamp,
+					uid: vm.user.id
+				}, function(event) {
+					if (event.respCode == '0000') {
+						vm.user = event.result;
+					}
+				});
+				//返回true,继续页面关闭逻辑
+				return true;
+			});
+
+			var self = plus.webview.currentWebview();
+
+			vm.user = self.user;
+			//普通示例
+			var userPicker = new mui.PopPicker();
+			userPicker.setData([{
+				value: '0',
+				text: '男'
+			}, {
+				value: '1',
+				text: '女'
+			}]);
+
+
+			plus.cache.calculate(function(size) {
+				sizeCache = size;
+				var size_m = parseFloat(sizeCache / (1024 * 1024)).toFixed(2);
+				document.getElementById("cache").innerText = size_m + "M";
+			});
+		})
+
+		function cleanCache() {
+			plus.cache.clear(function() {
+				document.getElementById("cache").innerText = '0 M';
+			});
+		}
+
+		document.getElementById("loginOut").addEventListener("tap", function() {
+			plus.storage.removeItem(sign_user_id);
+
+			var targetUser = plus.webview.getWebviewById("view/self/self.html");
+			mui.fire(targetUser, "refreshUser", {
+				content: "刷新个人中心",
+				logOut: "1"
+			});
+
+			var refreshRedPck = plus.webview.getWebviewById("view/self/welfare/redpack.html");
+			mui.fire(refreshRedPck, "refreshRedPck", {
+				content: "刷新红包页"
+			});
+
+			mui.back();
+		})
+
+
+
+		/*点击跳转修改昵称*/
+		document.getElementById("updateName").addEventListener("tap", function() {
+			mui.openWindow({
+				url: '/view/self/setting/nickname/nickname.html',
+				id: 'nickname.html',
+				waiting: {
+					autoShow: false, //自动显示等待框，默认为true
+				},
+				extras: {
+					user: vm.user
+				}
+			})
+		})
+		/*点击跳转绑定支付宝*/
+		document.getElementById("bindingAlipay").addEventListener("tap", function() {
+			mui.openWindow({
+				url: '/view/self/setting/bindingAlipay/bindingAlipay.html',
+				id: 'nickname.html',
+				waiting: {
+					autoShow: false, //自动显示等待框，默认为true
+				},
+				extras: {
+					user: vm.user
+				}
+			})
+		})
+		/*点击跳转修改密码*/
+		document.getElementById("clickUpdatepwd").addEventListener("tap", function() {
+			mui.openWindow({
+				url: '/view/self/setting/changePwd/changePwd.html',
+				id: 'changePwd.html',
+				waiting: {
+					autoShow: false, //自动显示等待框，默认为true
+				},
+				extras: {
+					user: vm.user
+				}
+			})
+		})
+	</script>
+
+
+</html>

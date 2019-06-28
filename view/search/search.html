@@ -1,0 +1,231 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../iconfont/iconfont.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="../../css/base.css"/>
+    	<link rel="stylesheet" type="text/css" href="../../css/style.css"/>
+    	<link href="../../css/all.css" rel="stylesheet">
+    	 <script  src="../../js/rem.js"></script>   
+    	 <style type="text/css">
+    	 	.mui-content{background-color: #FFFFFF;}
+    	 	.mui-slider-item{background: #ffffff;width: 100%;border-bottom: 0;}
+    	 	.flex-col{padding: 0 15px;}
+    	 	.mui-action-back.mui-icon.mui-pull-right{margin-top:4px ;margin-right: 10px;}
+    	 	.mui-active{width: .1px;}
+    	 	.mui-search.mui-active:before{left: 20px;}
+    	 </style>
+	</head>
+
+	<body>
+		
+		<header class="page-header fixed-header mui-bar mui-bar-nav" style="z-index: 999999;">
+			<div class="centerflex">
+				<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+				<div class="mui-input-row mui-search flex-col" >
+					<input type="search" id="search" class="mui-input-clear" placeholder="搜索宝贝 领券省钱 分享赚钱">
+				</div>
+				<button class="mui-btn mui-btn-blue mui-btn-link mui-pull-right" id="searchbtn">搜索</button>
+			</div>
+			
+		</header>
+		
+		<div class="mui-content" id="main">
+			<div class="mui-slider">
+			    <div class="mui-slider-group">
+			        <div class="mui-slider-item mui-control-content mui-active">
+			        	<div class="mui-row">
+			        		<ul class="mui-table-view" id="show-keyword">
+		        					<li class="mui-table-view-cell" v-for="keyword in keywords" @tap="open_goodsSearch(keyword)">
+			        		            <a class="mui-navigate-right">
+			        		            	{{keyword}}
+			        		            </a>
+			        		        </li>
+			        		    </ul>
+                         </div>
+			        </div>
+			    </div>
+			</div>
+			
+			<div class="mui-scroll">
+                <div class="sch-cont mui-content-padded ">
+                    <div class="section mui-row">
+                        <div class="tit mui-content-padded">
+                        	<i class="iconfont icon-hot"></i>历史搜索:
+                        </div>
+                        <div class="mui-content-padded mui-row ">
+                            <div class="mui-content-padded fl" v-for="tag in historyTags" @tap="open_goodsSearch(tag)">
+                            	<span class="mui-badge" style="max-width: 300px;overflow: hidden;">
+                            		<span class="mui-ellipsis" >{{tag}}</span>
+                            	</span>
+                            </div>
+                        </div>
+                        
+                </div>
+            </div>
+            
+            <div class="mui-scroll">
+                <div class="sch-cont mui-content-padded ">
+                    <div class="section mui-row">
+                        <div class="tit mui-content-padded">
+                        	<i class="iconfont icon-hot"></i>热门搜索:
+                        </div>
+                        <div class="mui-content-padded mui-row ">
+                            <div class="mui-content-padded fl" v-for="tag in tags" @tap="open_goodsSearch(tag)">
+                            	<span class="mui-badge " >{{tag}}</span>
+                            </div>
+                        </div>
+                        
+                </div>
+            </div>
+		</div>
+		
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/api.js"></script>
+		<script src="../../js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../js/constant.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../js/template-web.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../js/copy.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init({swipeBack: false});
+			
+			var searchPage = new Vue({
+				el:'#main',
+				data:{			
+					tags:[],
+					keywords:[],
+					historyTags:[]
+				}
+			});
+			
+			
+			
+			
+			var userId = '';
+			
+			mui.plusReady(function(){
+				
+				//plus.storage.removeItem(history_search);
+				
+				var search = plus.storage.getItem(history_search);
+				
+				if(search!=null){
+					search = search.substr(0,search.length-1);
+					
+					searchPage.historyTags = search.split(",");
+				}
+				
+				
+				/**
+				 * 热门搜索
+				 */
+				mui.getJSON(httpUrl,{
+					method:'hotSearch00001',
+					module:goodApi,
+					requestId:requestId,
+					sign:signMd5,
+					timeStamp:timeStamp
+				},function(event){
+					if(event.respCode=='0000'){
+						searchPage.tags = event.result;
+						return;
+					}
+				});
+				
+				/**
+				 * 监听页面刷新
+				 */
+				window.addEventListener('refreshSearch', function(e){//执行刷新
+					userId = plus.storage.getItem(sign_user_id);
+					//返回true,继续页面关闭逻辑
+					return true;
+	            });
+				
+				userId = plus.storage.getItem(sign_user_id);
+				
+				document.getElementById("search").addEventListener('input',function(){
+					userId = plus.storage.getItem(sign_user_id);
+					var keyword = this.value;
+					
+					if(userId==''||userId==null){
+						open_login();
+						return;
+					}
+					/**
+					 * 搜索关键词联想
+					 */
+					mui.getJSON(httpUrl,{
+						method:'goods00007',
+						module:goodApi,
+						requestId:requestId,
+						sign:signMd5,
+						timeStamp:timeStamp,
+						keyword:keyword
+					},function(res){
+						if(res.respCode=='0000'){
+							searchPage.keywords = res.result;
+						}
+					});
+					
+				});
+				
+				/*点击搜索按钮*/
+				document.getElementById("searchbtn").addEventListener("tap",function(event) {
+					var value = document.getElementById("search").value;					
+					open_goodsSearch(value);
+					
+				});
+				
+				/***
+				 * 点击搜索键
+				 */
+				document.getElementById("search").addEventListener("keypress",function(event) {
+				    if(event.keyCode == "13") {
+				    	open_goodsSearch(this.value)
+				    }
+				});
+				
+			})
+			
+			
+			function open_goodsSearch(keyword){
+				var userId = plus.storage.getItem(sign_user_id);
+				if(userId==null||userId==''){
+					open_login();
+					return;
+				}
+				
+				addToStorage(keyword);	
+					
+				
+				
+				mui.openWindow({
+					url:'/view/goods/goodsSearch.html',
+					id: 'view/goods/goodsSearch.html',
+					show:{
+						aniShow:'slide-in-right'
+					},
+					waiting: {
+						autoShow: false
+					},
+					extras:{
+						keyword:keyword
+					}
+				})
+				
+			}
+			
+			
+	
+			
+			
+			
+			
+		</script>
+	</body>
+
+</html>

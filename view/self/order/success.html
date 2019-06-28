@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../../css/self/orderInquiry.css"/>
+		<style type="text/css">
+			.mui-table-view .mui-media-object{max-width: 30%;width: 30%;height: 100px;}
+			.mui-table-view .mui-media-body{width: 64%;}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">订单查询</h1>
+		</header>
+		<div class="mui-content-padded" id="card">
+			<div class="mui-card-header mui-text-center">
+				<p>订单内容</p>
+			</div>	
+			<div class="mui-content-padded">
+			    <ul class="mui-table-view">
+				    <li class="mui-table-view-cell mui-media">
+				        <a href="javascript:;">
+				            <img class="mui-media-object mui-pull-left" :src="trade.imgSrc">
+				            <div class="mui-media-body">
+				                	订单NO：{{trade.thirdOrderNo}}
+				                <p class="mui-ellipsis-2">
+				                	<p class="mui-ellipsis"><span>金额：</span>{{trade.amount}} 元</p>
+				                	<p class="mui-ellipsis-2"><span>商品名字：</span>{{trade.goodsName}}</p>
+				                	<p class="mui-ellipsis"><span>时间:</span>  {{trade.createDay}}</p>
+				                </p>
+				            </div>
+				        </a>
+				    </li>
+				</ul>
+			</div>
+			<div class="mui-card" >
+				
+				<div class="mui-card-footer">
+					<h5><i>•</i>查询到订单：</h5>		
+					<p>1.购买人没同步的订单可通过订单查询找回；</p>
+					<p>2.建议购买人自查，运营商帮助超级会员查询时，不要点击确认找回，可让购买人自查并找回；</p>
+					<p>3.收益将按查找人的当前的用户关系进行归属。</p>
+				</div>
+			</div>
+			<div class="mui-content-padded">
+				<button type="button" id="successButton" class="mui-btn mui-btn-blue mui-btn-block">确定找回订单</button>
+			</div>
+			
+		</div>	
+		<script src="../../../js/mui.min.js"></script>
+		<script src="../../../js/rem.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../../js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../../js/api.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init();
+			
+			var vue = new Vue({
+				el:'#card',
+				data:{
+					trade:{}
+				}
+			})
+			
+			mui.plusReady(function(){
+				
+				var self = plus.webview.currentWebview();
+				vue.trade = self.trade;
+				
+				
+			})
+			
+			document.getElementById("successButton").addEventListener("tap",function(){
+				var userId = plus.storage.getItem(sign_user_id);
+				/***
+				 * 订单开始找回
+				 */
+				mui.getJSON(httpUrl,{
+					   method:'trade00002',
+	                   module:tradeApi,
+	                   requestId:requestId,
+					   sign:signMd5,
+					   timeStamp:timeStamp,
+	                   uid:userId,
+	                   orderNo:vue.trade.thirdOrderNo
+					},function(data){
+						if(data.respCode=='0000'){
+							mui.toast("订单已经找回");
+							
+							mui.openWindow({
+								id:'/view/self/myOrder/myOrder.html',
+								url:'/view/self/myOrder/myOrder.html',
+								show:{
+									aniShow:'slide-in-right'
+								},
+					            waiting: {
+					                 autoShow: false //自动显示等待框，默认为true
+					            }
+							})
+							
+							return;
+						}
+						
+						mui.toast(data.respMsg);
+					});
+			})
+		</script>
+	</body>
+
+</html>

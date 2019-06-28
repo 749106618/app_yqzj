@@ -1,0 +1,633 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="../../../js/rem.js"></script>
+		<link rel="stylesheet" type="text/css" href="../../../css/mui.min.css"/>
+		<link rel="stylesheet" type="text/css" href="../../../css/style.css"/>
+		<link rel="stylesheet" type="text/css" href="../../../css/base.css"/>
+		<link rel="stylesheet" type="text/css" href="../../../css/all.css"/>
+		<link rel="stylesheet" type="text/css" href="../../../css/self/redbao.css"/>
+		<style type="text/css">
+			.mui-bar-nav ~ .mui-content{padding-top: 10px;background-color: #fd3962;}
+			.mui-bar-nav{background: transparent;padding-top:30px;}
+			.mui-bar{border-bottom: 0;-webkit-box-shadow:none;}
+			.mui-bar-nav.mui-bar .mui-icon{margin: .4rem 0;padding: .1rem 1px;}
+			.mui-bar-nav .iconfont, .mui-bar-nav .mui-icon,.p-text,.mui-title{color: #FFFFFF;}
+			/*.mui-pull-left{width: 30px;height: 30px; border-radius: 25px;background-color: #8c7f7f;color: #FFFFFF;}*/
+			.background{color: #FFFFFF;font-size: 12px;margin: 35px 8px;line-height: 40px;}
+			fieldset{position: absolute;}
+            .mui-col-xs-3 .packAmount .max-span{color: red;display: block;margin-bottom: -.08rem;margin-top: -.4rem;font-size: .32rem;}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back  mui-pull-left mui-icon mui-icon-left-nav"></a>
+		    
+		    <a class="mui-pull-right">
+		    	<img src="../../../images/shuaxin.png" id="refresButton" width="20" height="20" style="margin: .4rem 0;"/>
+		    </a>
+		</header>
+		<div class="mui-content">
+			<img src="../../../images/rede.png" width="100%">
+		</div>
+		
+<div class="mui-content-padded" id="centent"  v-cloak>		
+	<div class="rede-core">
+		<form >
+		  <fieldset>
+			<legend>红包中心</legend>
+	    		<ul  class="mui-row">
+			
+					<li v-if="openIsEmpty=='1'"  v-for="pack in openPager" class="mui-col-xs-3 mui-col-sm-3 ">								
+							<div class="draw-img">
+								<div class="draw-up show"></div>
+								<div class="draw-up-up show" style="top: -0.6rem;"></div>
+								<div class="draw-down hides" ></div>
+								<div class="draw-down2 show" ></div>
+								<div class="draw-list show" style="opacity: 1;top: -2rem;">
+									<img src="../../../images/self/red/open-jb.png"/>
+								</div>
+								<i class="packAmount show" style="top: 1rem;">￥{{pack.amount}}</i>
+							</div>
+							<span>邀请{{pack.inviteNumber}}人</span>
+					</li>
+					
+					<li v-if="waitIsEmpty=='1'"  v-for="pack in waitPager" class="mui-col-xs-3 mui-col-sm-3 scroll-wrapper">
+						<div class="draw-gift">
+							<div class="draw-img">
+								<div class="draw-up hides"></div>
+								<div class="draw-up-up"></div>
+								<div class="draw-mid draw-mid-move" :id="pack.inviteNumber"></div>
+								<div class="draw-down"></div>
+								<div class="draw-down2 hides"></div>
+								<div class="draw-list"><img src="../../../images/self/red/open-jb.png"/></div>
+								<i>￥{{pack.amount}}</i>
+							</div>
+							<span>邀请{{pack.inviteNumber}}人</span>
+						</div>
+					</li>
+					
+					<li v-for="pack in closePaper" class="mui-col-xs-3 mui-col-sm-3 " >
+							<div class="draw-img draw-down" ></div>
+							<i class="packAmount show" style="top:1.4rem;" v-html="pack.packAmount"></i>
+							<span>邀请{{pack.inviteNumber}}人</span>
+					</li>
+	    		</ul>
+		  </fieldset>
+		</form>	
+		
+		<h4>邀请方式</h4>
+		<img id="myShare" src="../../../images/yq.png" width="100%" @tap="myShare_openWindow">	
+		<h4>邀请成果</h4>				
+		<p>成功邀请<b @tap="totalInviteClick()">{{totalInvite}} 人</b> 金额累计<b @tap="totalAmountClick()">￥ {{totalAmount}}</b></p>
+	</div>			
+</div>
+		<script src="../../../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../../js/api.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../../js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../../js/jquery-1.10.1.min.js" type="text/javascript" charset="utf-8"></script>
+
+		<script type="text/javascript">
+			mui.init({swipeBack:false});
+			
+			
+			var vm = new Vue({
+				el:'#centent',
+				data:{
+					totalIsEmpty:'0',		//统计用户是否已经邀请了人
+					totalInvite:'', 		//邀请总人数
+					totalAmount:'',		    //邀请总金额
+					openPager:[],			//用户已领取   ------->标识
+					openIsEmpty:'0',
+					waitPager:[],			//用户未领取邀请统计    ------->标识
+					waitIsEmpty:'0',
+					closePaper:[],			//未开启状态      ------->标识
+					closeEmpty:'0',
+					userPack:[]
+				
+				}
+			})
+			
+			
+			mui.plusReady(function(){
+				
+				//去掉滚动条
+				plus.webview.currentWebview().setStyle({
+					scrollIndicator: 'none'
+				});
+				var userId = plus.storage.getItem(sign_user_id);
+				reqeustRedList(userId);
+				
+				
+				/**
+				 * 监听页面刷新
+				 */
+				window.addEventListener('refreshRedPck', function(e){//执行刷新
+					var userId = plus.storage.getItem(sign_user_id);
+					refresRedPack(userId);
+					//返回true,继续页面关闭逻辑
+					return true;
+	            });
+				
+			})
+			
+			function myShare_openWindow(){
+				
+				var userId = plus.storage.getItem(sign_user_id);
+				if(userId==''||userId==null){
+					open_login();
+					return ;
+				}
+				
+				mui.openWindow({
+					id:'/view/self/help/myShare.html',
+					url:'/view/self/help/myShare.html',
+					show:{
+						aniShow:'slide-in-right'
+					},
+		            waiting: {
+		                 autoShow: false //自动显示等待框，默认为true
+		            }
+				})
+			}
+			
+			
+			
+			function reqeustRedList(userId){
+						
+				
+				if(userId==null){
+					vm.userPack = [];
+					vm.totalAmount = '0';
+					vm.totalInvite = '0';
+					for(var i = 1; i<101;i++){
+							switch(i){
+								case 6:
+									vm.closePaper.push({
+										inviteNumber: i,
+										packAmount: '<span class="max-span">最高</span>￥8.8'
+									})
+									break;
+								case 14:
+									vm.closePaper.push({
+										inviteNumber: i,
+										packAmount: '<span class="max-span">最高</span>￥28.8'
+									})
+									break;
+								case 23:
+									vm.closePaper.push({
+										inviteNumber: i,
+										packAmount: '<span class="max-span">最高</span>￥68.8'
+									})
+									break;
+								case 40:
+									vm.closePaper.push({
+										inviteNumber: i,
+										packAmount: '<span class="max-span">最高</span>￥98.8'
+									})
+									break;
+								case 70:
+									vm.closePaper.push({
+										inviteNumber: i,
+										packAmount: '<span class="max-span">最高</span>￥200'
+									})
+									break;
+								case 100:
+									vm.closePaper.push({
+										inviteNumber: i,
+										packAmount: '<span class="max-span">最高</span>￥298'
+									})
+									break;
+								default:
+									vm.closePaper.push({
+										inviteNumber: i,
+										packAmount: '密'
+									})
+							}
+						}
+					return;
+				}
+				
+				
+				mui.getJSON(httpUrl,{
+					method:'redPackage00002',
+					module:tradeApi,
+					requestId:requestId,
+					sign:signMd5,
+					timeStamp:timeStamp,
+					userid:userId,
+					status:''
+				},function(event){
+					if(event.respCode=='0000'){
+						var listLength = event.result.list.length;
+						vm.userPack = event.result.list;
+						vm.totalAmount = event.result.totalAmount;
+						vm.totalInvite = event.result.totalInvite;
+							
+						for(var i = 1; i<101;i++){
+							
+							if(i>listLength){
+									switch(i){
+										case 6:
+											vm.closePaper.push({
+												inviteNumber: i,
+												packAmount: '<span class="max-span">最高</span>￥8.8'
+											})
+											break;
+										case 14:
+											vm.closePaper.push({
+												inviteNumber: i,
+												packAmount: '<span class="max-span">最高</span>￥28.8'
+											})
+											break;
+										case 23:
+											vm.closePaper.push({
+												inviteNumber: i,
+												packAmount: '<span class="max-span">最高</span>￥68.8'
+											})
+											break;
+										case 40:
+											vm.closePaper.push({
+												inviteNumber: i,
+												packAmount: '<span class="max-span">最高</span>￥98.8'
+											})
+											break;
+										case 70:
+											vm.closePaper.push({
+												inviteNumber: i,
+												packAmount: '<span class="max-span">最高</span>￥200'
+											})
+											break;
+										case 100:
+											vm.closePaper.push({
+												inviteNumber: i,
+												packAmount: '<span class="max-span">最高</span>￥298'
+											})
+											break;
+										default:
+											vm.closePaper.push({
+												inviteNumber: i,
+												packAmount: '密'
+											})
+									}
+							}else{
+								
+									vm.totalIsEmpty = '1';
+									
+									for(var j=0;j<listLength;j++){
+										if(i==vm.userPack[j].inviteNumber){
+											if(vm.userPack[j].packStatus==='1'){
+												vm.openIsEmpty = '1';
+												vm.openPager.push({
+													inviteNumber: i,
+													amount:vm.userPack[j].amount
+												})		
+											}
+											
+											if(vm.userPack[j].packStatus==='0'){
+												vm.waitIsEmpty = '1';
+												vm.waitPager.push({
+													id:vm.userPack[j].id,
+													inviteNumber: i,
+													amount:vm.userPack[j].amount
+												})		
+											}
+											
+										}
+									
+									}
+								
+								}
+							
+							}
+						
+						
+							mui(".mui-row").on('tap', '.draw-mid', function(event){
+						
+								var that = $(this);
+								
+								that.removeClass("draw-mid-move").css({display:"none"});
+								that.siblings(".draw-up").animate({
+									opacity: "1"
+								}, 100);
+								that.siblings(".draw-up-up").animate({
+									opacity: "1",
+									top: "-.6rem"
+								}, 200);
+						
+								that.siblings(".draw-down").animate({
+									opacity: "0"
+								}, 300);
+								that.siblings(".draw-down2").animate({
+									opacity: "1"
+								}, 300);
+								that.siblings(".rede-core ul li i").animate({
+									opacity: "1"
+								}, 400).animate({top:".9rem"},600);
+								
+								
+								var userId = plus.storage.getItem(sign_user_id);
+								var id = this.getAttribute("id");
+								mui.getJSON(httpUrl,{
+									method:'redPackage00001',
+									module:tradeApi,
+									requestId:requestId,
+									sign:signMd5,
+									timeStamp:timeStamp,
+									uid:userId,
+									number:id
+								},function(data){
+									if(data.respCode=='0000'){
+										var targetUser = plus.webview.getWebviewById("view/self/self.html");
+										mui.fire(targetUser, "refreshUser", {content:"刷新个人中心"});
+										
+										that.siblings(".draw-list").animate({opacity:"1"},350).animate({top:"-2rem"},500);
+									}
+								})	
+							});
+						
+						}
+				})
+		}
+			
+			
+			
+			
+			
+			document.getElementById("refresButton").addEventListener("tap",function(){
+				var userId = plus.storage.getItem(sign_user_id);
+				if(userId==''||userId==null){
+					open_login();
+					return ;
+				}
+				refresRedPack(userId);
+				mui.toast("刷新成功");
+			})
+			
+			
+			function refresRedPack(userId){
+				if(userId==null){
+					vm.totalIsEmpty = '0';		//统计用户是否已经邀请了人
+					vm.totalInvite = '0'; 		//邀请总人数
+					vm.totalAmount = '0';		    //邀请总金额
+					vm.openPager = [];			//用户已领取   ------->标识
+					vm.openIsEmpty = '0';
+					vm.waitPager = [];			//用户未领取邀请统计    ------->标识
+					vm.waitIsEmpty = '0';
+					vm.closePaper = [];			//未开启状态      ------->标识
+					vm.closeEmpty = '0';
+					vm.userPack= [];
+					for(var i = 1; i<101;i++){
+							switch(i){
+								case 6:
+									vm.closePaper.push({
+										inviteNumber: i,
+										packAmount: '<span class="max-span">最高</span>￥8.8'
+									})
+									break;
+								case 14:
+									vm.closePaper.push({
+										inviteNumber: i,
+										packAmount: '<span class="max-span">最高</span>￥28.8'
+									})
+									break;
+								case 23:
+									vm.closePaper.push({
+										inviteNumber: i,
+										packAmount: '<span class="max-span">最高</span>￥68.8'
+									})
+									break;
+								case 40:
+									vm.closePaper.push({
+										inviteNumber: i,
+										packAmount: '<span class="max-span">最高</span>￥98.8'
+									})
+									break;
+								case 70:
+									vm.closePaper.push({
+										inviteNumber: i,
+										packAmount: '<span class="max-span">最高</span>￥200'
+									})
+									break;
+								case 100:
+									vm.closePaper.push({
+										inviteNumber: i,
+										packAmount: '<span class="max-span">最高</span>￥298'
+									})
+									break;
+								default:
+									vm.closePaper.push({
+										inviteNumber: i,
+										packAmount: '密'
+									})
+							}
+						}
+					return;
+				}
+				
+				
+				mui.getJSON(httpUrl,{
+					method:'redPackage00002',
+					module:tradeApi,
+					requestId:requestId,
+					sign:signMd5,
+					timeStamp:timeStamp,
+					userid:userId,
+					status:''
+				},function(event){
+					if(event.respCode=='0000'){
+						
+						vm.totalIsEmpty = '0';		//统计用户是否已经邀请了人
+						vm.totalInvite = ''; 		//邀请总人数
+						vm.totalAmount = '';		    //邀请总金额
+						vm.openPager = [];			//用户已领取   ------->标识
+						vm.openIsEmpty = '0';
+						vm.waitPager = [];			//用户未领取邀请统计    ------->标识
+						vm.waitIsEmpty = '0';
+						vm.closePaper = [];			//未开启状态      ------->标识
+						vm.closeEmpty = '0';
+						vm.userPack= [];
+						
+						
+						var listLength = event.result.list.length;
+						vm.userPack = event.result.list;
+						vm.totalAmount = event.result.totalAmount;
+						vm.totalInvite = event.result.totalInvite;
+							
+						for(var i = 1; i<101;i++){
+							
+							if(i>listLength){
+									switch(i){
+										case 6:
+											vm.closePaper.push({
+												inviteNumber: i,
+												packAmount: '<span class="max-span">最高</span>￥8.8'
+											})
+											break;
+										case 14:
+											vm.closePaper.push({
+												inviteNumber: i,
+												packAmount: '<span class="max-span">最高</span>￥28.8'
+											})
+											break;
+										case 23:
+											vm.closePaper.push({
+												inviteNumber: i,
+												packAmount: '<span class="max-span">最高</span>￥68.8'
+											})
+											break;
+										case 40:
+											vm.closePaper.push({
+												inviteNumber: i,
+												packAmount: '<span class="max-span">最高</span>￥98.8'
+											})
+											break;
+										case 70:
+											vm.closePaper.push({
+												inviteNumber: i,
+												packAmount: '<span class="max-span">最高</span>￥200'
+											})
+											break;
+										case 100:
+											vm.closePaper.push({
+												inviteNumber: i,
+												packAmount: '<span class="max-span">最高</span>￥298'
+											})
+											break;
+										default:
+											vm.closePaper.push({
+												inviteNumber: i,
+												packAmount: '密'
+											})
+									}
+							}else{
+								
+									vm.totalIsEmpty = '1';
+									
+									for(var j=0;j<listLength;j++){
+										if(i==vm.userPack[j].inviteNumber){
+											if(vm.userPack[j].packStatus==='1'){
+												vm.openIsEmpty = '1';
+												vm.openPager.push({
+													inviteNumber: i,
+													amount:vm.userPack[j].amount
+												})		
+											}
+											
+											if(vm.userPack[j].packStatus==='0'){
+												vm.waitIsEmpty = '1';
+												vm.waitPager.push({
+													id:vm.userPack[j].id,
+													inviteNumber: i,
+													amount:vm.userPack[j].amount
+												})		
+											}
+											
+										}
+									
+									}
+								
+								}
+							
+							}
+						
+						
+							mui(".mui-row").on('tap', '.draw-mid', function(event){
+						
+								var that = $(this);
+								
+								that.removeClass("draw-mid-move").css({display:"none"});
+								that.siblings(".draw-up").animate({
+									opacity: "1"
+								}, 100);
+								that.siblings(".draw-up-up").animate({
+									opacity: "1",
+									top: "-.6rem"
+								}, 200);
+						
+								that.siblings(".draw-down").animate({
+									opacity: "0"
+								}, 300);
+								that.siblings(".draw-down2").animate({
+									opacity: "1"
+								}, 300);
+								that.siblings(".rede-core ul li i").animate({
+									opacity: "1"
+								}, 400).animate({top:".9rem"},600);
+								
+								
+								var userId = plus.storage.getItem(sign_user_id);
+								var id = this.getAttribute("id");
+								mui.getJSON(httpUrl,{
+									method:'redPackage00001',
+									module:tradeApi,
+									requestId:requestId,
+									sign:signMd5,
+									timeStamp:timeStamp,
+									uid:userId,
+									number:id
+								},function(data){
+									if(data.respCode=='0000'){
+										var targetUser = plus.webview.getWebviewById("view/self/self.html");
+										mui.fire(targetUser, "refreshUser", {content:"刷新个人中心"});
+										that.siblings(".draw-list").animate({opacity:"1"},350).animate({top:"-2rem"},500);
+									}
+								})	
+							});
+						
+						}
+				})
+			}
+			
+			
+		function totalInviteClick(){
+			var userId = plus.storage.getItem(sign_user_id);
+			if(userId==''||userId==null){
+				open_login();
+				return ;
+			}
+			mui.openWindow({
+				id:'view/self/fans/fans.html',
+				url:'/view/self/fans/fans.html',
+				show:{
+					aniShow:'slide-in-right'
+				},
+	            waiting: {
+	                 autoShow: false //自动显示等待框，默认为true
+	            }
+			})
+		}
+		
+		
+		function totalAmountClick(){
+			var userId = plus.storage.getItem(sign_user_id);
+			if(userId==''||userId==null){
+				open_login();
+				return ;
+			}
+			mui.openWindow({
+				id:'view/self/withdrawal/withdrawal.html',
+				url:'/view/self/withdrawal/withdrawal.html',
+				show:{
+					aniShow:'slide-in-right'
+				},
+	            waiting: {
+	                 autoShow: false //自动显示等待框，默认为true
+	            }
+			})
+		}
+			
+			
+			
+		</script>
+	</body>
+
+</html>
+
+
+

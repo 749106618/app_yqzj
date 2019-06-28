@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>个人中心</title>
+	<link rel="stylesheet" type="text/css" href="../../css/mui.min.css"/>
+	<link href="../../iconfont/iconfont.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../../css/base.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/style.css"/>
+	<link rel="stylesheet" type="text/css" href="../../css/all.css"/>
+	<style type="text/css">
+		body, .mui-content{background: #f5f5f5;}
+		.mui-bar-tab .mui-tab-item .mui-tab-label{font-size: .34rem;}
+		.mui-content-padded .mui-col-xs-6 img,.mui-table-view .mui-col-xs-6 img{width: 100%;}
+		.mui-slider .mui-slider-group .mui-slider-item img{height: 2.0rem;}
+		#top{padding-top: 35px;height:190px;}
+		.ft {font-size: 15px;}
+		.mui-grid-view.mui-grid-9{padding: 12px 0;}
+		.mui-table-view.mui-grid-view .mui-table-view-cell .mui-media-body{text-align: center;color: #929292;font-size: .32rem;}
+	</style>
+</head>
+<body>
+	<div class="mui-content " id="content" v-cloak>
+			<div id="top">
+				<div id="btn_accountManager" class="acc_manager">
+					<span class="mui-icon mui-icon-gear  mui-pull-right" id="setting"></span>
+				</div>
+				<div class="top-info">
+					<div class="top-info-img" id="go_photo">
+						<img src="../../images/self/img_default_avatar@3x.png" @tap="rankNameClick()"/>
+					</div>
+	 
+					<div class="top-info-name">
+						<div class="user-name-box">
+							<a class="user-name" v-text="user.nickName"></a>
+							<button type="button" class="mui-btn user-lever" @tap="rankNameClick()" v-text="userAccount.rankName"></button>
+						</div>
+						<div class="user-id">邀请码:
+							<textarea id="copy" rows="1" readonly v-text="user.inviteCode"></textarea>
+							<button type="button" @tap="copyLink(user.inviteCode)" class="mui-btn" v-text="'复制'"></button>
+						</div>
+					</div>
+				</div>
+			</div>
+				
+			<div id="wallet" class="mui-content-padded">
+				<div class="order-top">
+					可提现:<span class="mui-icon ft" >¥  {{userAccount.balance - userAccount.frozen|tradeOffs}}</span> 
+					<button type="button" class="mui-pull-right mui-btn" @tap="open_wallet()" v-text="'提现'"></button>
+				</div>
+				<ul class="mui-table-view mui-grid-view">
+					<li class="mui-table-view-cell mui-media mui-col-xs-4">
+					    <a @tap="open_wallet()">
+					        <span class="ft" v-text="'¥ '+userAccount.estimateMonth"></span>
+							<div class="mui-media-body" v-text="'本月预收'"></div>
+					    </a>
+					</li>
+					<li class="mui-table-view-cell mui-media mui-col-xs-4">
+					    <a @tap="open_wallet()">
+					        <span class="ft" v-text="'¥ '+userAccount.todayEstimate"></span>
+							<div class="mui-media-body" v-text="'今日收益'"></div>
+					    </a>
+					</li>
+					<li class="mui-table-view-cell mui-media mui-col-xs-4">
+					    <a @tap="open_fansTotal()">
+					        <span class="ft" v-text="userAccount.fansTotal"></span>
+					        <div class="mui-media-body" v-text="'我的粉丝'"></div>
+					    </a>
+					</li>
+				</ul>
+			</div>	
+			
+			<ul class="mui-table-view mui-grid-view" id="members">
+		        <li class="mui-table-view-cell mui-media mui-col-xs-6" v-for="vip in vipImg">
+		           	<a class="checkUpgradeOnClik" :id="vip.id" :data="vip.money">
+		               <img :src="vip.img"/>
+		            </a>
+		        </li>
+		    </ul>  	
+			<div id="order" class="mui-content-padded otherMessage">
+				<div class="order-top" v-text="'我的订单'"></div>
+				<ul class="mui-table-view mui-grid-view">
+					<li class="mui-table-view-cell mui-media mui-col-xs-4" v-for="category in categorys" @tap="open_window(category.url)">
+					    <a href="#">
+					        <img :src="category.img" />
+					        <div class="mui-media-body" v-text="category.title"></div>
+					    </a>
+					</li>
+				</ul>
+			</div>
+				
+			<div id="orderInvitation" class="mui-content-padded">
+					<div id="mui-slider" class="mui-slider" >
+					  	<div class="mui-slider-group mui-slider-loop">
+					    	<!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+						   	<div class="mui-slider-item mui-slider-item-duplicate">
+						      <a data-title-type="transparent_native" @tap="open_window('/view/self/welfare/redpack.html')">
+						        <img src="../../images/self/yaoqing.jpg"/>
+						      </a>
+						    </div>
+						   	<div class="mui-slider-item">
+						      <a  @tap="open_window('/view/self/order/queryOrder.html')">
+						        <img src="../../images/self/orderQuery.jpg" />
+						      </a>
+						    </div>
+						  	<div class="mui-slider-item">
+						      <a  @tap="open_window('/view/self/welfare/redpack.html')">
+						        <img src="../../images/self/yaoqing.jpg" />
+						       </a>
+						    </div>
+						    <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+						  	<div class="mui-slider-item mui-slider-item-duplicate">
+						      <a @tap="open_window('/view/self/order/queryOrder.html')">
+						        <img src="../../images/self/orderQuery.jpg" />
+						      </a>
+						    </div>
+					  	</div>
+					</div>
+			</div>
+				
+			<div id="menuItem" class="mui-content-padded otherMessage">
+				<ul class="mui-table-view mui-grid-view mui-grid-9">
+					<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" v-for="item in texts" >
+					    <a @tap="open_window(item.url)" >
+					        <img :src="item.img" />
+					        <div class="mui-media-body" v-text="item.title"></div>
+					    </a>
+					</li>
+				</ul>												
+			</div>
+				
+</div>
+	<script src="../../js/rem.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../js/api.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../js/constant.js" type="text/javascript" charset="utf-8"></script>
+	<script>
+		mui.init({swipeBack:false});
+		
+		/**
+		 * 创建vue对象
+		 */
+		var userPage = new Vue({
+			el:"#content",
+			data:{
+				user:{},
+				texts:[
+					{img:'../../images/self/icon_my_share@2x.png',title:'我要分享',url:'/view/self/help/myShare.html'},
+					{img:'../../images/self/icon_my_agency@2x.png',title:'会员权益',url:'/view/self/help/member.html'},
+					{img:'../../images/self/icon_my_help@2x.png',title:'新手帮助',url:'/view/self/help/help.html'},
+					{img:'../../images/self/icon_my_collect@2x.png',title:'我的收藏',url:'/view/self/help/collection.html'},
+					{img:'../../images/self/icon_my_announcement@2x.png',title:'公司公告',url:'/view/self/help/notice.html'},
+					{img:'../../images/self/icon_my_service@2x.png',title:'联系客服',url:'/view/self/help/customer.html'},
+					{img:'../../images/self/icon_my_question@2x.png',title:'常见问题',url:'/view/self/help/questions.html'},
+					{img:'../../images/self/icon_my_us@2x.png',title:'关于我们',url:'/view/self/help/aboutAs.html'}
+				],
+				userAccount:{
+					rankName:'请先登录/注册',
+					balance:0,
+					frozen:0,
+					amt:0,
+					fansTotal:0,
+					todayEstimate:0,
+					estimateMonth:0
+				},
+				categorys:[
+					{img:'../../images/self/icon_my_taobao@2x.png',title:'淘宝',url:'/view/self/myOrder/myOrder.html'},
+					{img:'../../images/self/icon_my_jd@2x.png',title:'京东',url:''},
+					{img:'../../images/self/icon_my_pingduoduo.png',title:'拼多多',url:''}
+				],
+				vipImg:[
+					{img:'../../images/self/icon_my_60.png',id:'3',money:'58'},
+					{img:'../../images/self/icon_my_298.png',id:'4',money:'298'}
+				]
+			},
+				filters:{
+					tradeOffs:function(value){
+						value = value.toFixed(2);
+						return parseFloat(value);
+					}
+				}
+		});
+		
+		var userId = '';
+		
+		mui.plusReady(function(){
+			plus.webview.currentWebview().setStyle({
+				scrollIndicator: 'none'
+			});
+			
+			/**
+			 * 监听页面刷新
+			 */
+			window.addEventListener('refreshUser', function(e){//执行刷新
+				userId = plus.storage.getItem(sign_user_id);
+				if(userId==null){
+					userPage.user = {};
+					userPage.userAccount = {
+						rankName:'请先登录/注册',
+						balance:0,
+						frozen:0,
+						amt:0,
+						fansTotal:0,
+						todayEstimate:0,
+						estimateMonth:0
+					};
+					return;
+				}
+				
+				requestUser(userId);
+				//返回true,继续页面关闭逻辑
+				return true;
+            });
+			
+			userId = plus.storage.getItem(sign_user_id);
+			
+			requestUser(userId);
+			
+			var mui_slider = mui("#mui-slider");
+			mui_slider.slider({
+			  interval:4000//自动轮播周期，若为0则不自动播放，默认为0；
+			});
+		})
+		
+		/**
+		 * 页面跳转
+		 * @param {Object} uri
+		 */
+		function open_window(uri){
+			userId = plus.storage.getItem(sign_user_id);
+			
+			if(userId==''||userId==null){
+				open_login();
+				return ;
+			}
+			if(uri==''){
+				mui.toast("模块正在升级中");
+				return;
+			}
+			
+			mui.openWindow({
+				id:uri,
+				url:uri,
+				show:{
+					aniShow:'slide-in-right'
+				},
+	            waiting: {
+	                 autoShow: false //自动显示等待框，默认为true
+	            }
+			})
+		}
+		
+		
+		
+		
+	/**
+	 * 会员升级
+	 */
+	mui(".mui-table-view").on("tap",".checkUpgradeOnClik",function (event) {
+		if(userId==''||userId==null){
+			open_login();
+			return;
+		}
+		
+		var rankId = this.getAttribute("id");
+		var money = this.getAttribute("data");
+		console.log(htmlUrl);
+
+		var postUrl = htmlUrl+'mobile/memberPayInvoke.htm';
+		mui.post(postUrl,{rankId:rankId,id:userId},function(data){
+			if(data.resultCode==0){
+				mui.toast(data.resultMsg);
+				return;
+			}
+			var rankName = "";
+			if(rankId == '4'){
+				rankName = "升级钻石会员";
+			} 
+			if(rankId == '3'){
+				rankName = "升级铂金会员";
+			}
+			
+			var openUrl = htmlUrl+"mobile/method.htm?rankId="+rankId+"&id="+userId+"&money="+money;
+			
+			mui.openWindow({
+				id:'/view/inclued/userPage.html',
+				url:'/view/inclued/userPage.html',
+				extras:{
+					title:rankName,
+					url:openUrl
+				},
+				show:{
+					aniShow:'slide-in-right'
+				},
+	            waiting: {
+	                 autoShow: false //自动显示等待框，默认为true
+	            }
+			})
+		},'json');
+	})
+	
+	
+	//账号管理
+	mui("#btn_accountManager").on("tap","span",function(){
+			if(userId==''||userId==null){
+				open_login();
+				return;
+			}
+			
+			mui.openWindow({
+				url: "/view/self/setting/setting.html",
+				id: "view/self/setting/setting.html",
+				waiting: {
+	                 autoShow: false, //自动显示等待框，默认为true
+	           },
+	           extras:{
+	           		user:userPage.user
+	           }
+			})
+		})
+	
+		//提现 会员收益
+		function open_wallet(){
+			userId = plus.storage.getItem(sign_user_id);
+			if(userId==''||userId==null){
+				open_login();
+				return;
+			}
+			
+			mui.openWindow({
+				id:'/view/self/withdrawal/withdrawal.html',
+				url:'/view/self/withdrawal/withdrawal.html',
+				waiting: {
+	                 autoShow: false, //自动显示等待框，默认为true
+	           },
+	           extras:{
+	           		user:userPage.user
+	           }
+			})
+		}
+		
+		//我的粉丝
+		function open_fansTotal(){
+			if(userId==''||userId==null){
+				open_login();
+				return;
+			}
+			//plus.runtime.openURL('yqzj://success')
+			mui.openWindow({
+				id:'/view/self/fans/fans.html',
+				url:'/view/self/fans/fans.html',
+				show:{
+					aniShow:'slide-in-right'
+				},
+	            waiting: {
+	                 autoShow: false //自动显示等待框，默认为true
+	            }
+			})
+		}
+		
+		
+		
+		function copyLink(inviteCode){
+			if(userId==''||userId==null){
+				mui.openWindow({
+					id:'login',
+					url:'/view/login/login.html',
+					show:{
+						aniShow:'slide-in-right'
+					},
+		            waiting: {
+		                 autoShow: false //自动显示等待框，默认为true
+		            }
+				})
+				return;
+			}
+			copyShareUrl(inviteCode);
+			mui.alert("邀请码已复制，快去邀请好友吧！");
+		}
+		
+		function rankNameClick(){
+			if(userId==''||userId==null){
+				mui.openWindow({
+					id:'login',
+					url:'/view/login/login.html',
+					show:{
+						aniShow:'slide-in-right'
+					},
+		            waiting: {
+		                 autoShow: false //自动显示等待框，默认为true
+		            }
+				})
+				return;
+			}
+		}
+		
+		
+		
+		function requestUser(uid){
+			
+			/**
+			 * 用户资料
+			 */
+			mui.post(httpUrl,{
+					method:'user00010',
+					module:userApi,
+					requestId:requestId,
+					sign:signMd5,
+					timeStamp:timeStamp,
+					uid:uid
+				},function(event){
+					if(event.respCode=='0000'){
+						userPage.user = event.result;
+					}
+				},'json'
+			);
+			
+			/**
+			 * 用户资料
+			 */
+			mui.getJSON(httpUrl,{
+					method:'account00001',
+					module:tradeApi,
+					requestId:requestId,
+					sign:signMd5,
+					timeStamp:timeStamp,
+					pageNumber:'1',
+					pageSize:'20',
+					uid:uid
+				},function(event){
+					if(event.respCode=='0000'){
+						var result = event.result;
+						
+						var rankName = "";
+						if(result.rankId == '4'){
+							rankName = "钻石会员";
+						}else if(result.rankId == '3'){
+							rankName = "铂金会员";
+						}else{
+							rankName = "普通用户";
+						}
+						
+						userPage.userAccount.rankName = rankName;
+						userPage.userAccount.balance = result.balance == ''?0:result.balance;
+						userPage.userAccount.frozen = result.frozen == ''?0:result.frozen;
+						
+						userPage.userAccount.estimateMonth = result.estimateMonth;
+						userPage.userAccount.todayEstimate = result.todayEstimate;
+						userPage.userAccount.fansTotal = result.fansTotal;
+						
+					}
+				});
+
+		}
+		
+	</script>
+</body>
+</html>

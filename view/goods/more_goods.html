@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<title>为您推荐</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="../../js/rem.js"></script>    
+	    <link href="../../iconfont/iconfont.css" rel="stylesheet">
+	    <link href="../../css/mui.min.css" rel="stylesheet">
+	    <link href="../../css/all.css" rel="stylesheet">
+	    <link rel="stylesheet" type="text/css" href="../../css/base.css"/>
+	    <link rel="stylesheet" type="text/css" href="../../css/style.css"/>
+	    <link rel="stylesheet" type="text/css" href="../../css/icons-extra.css"/>
+	      <style type="text/css">		
+	      	.mui-content{background-color: #FFFFFF;}	
+			.mui-content>.mui-table-view:first-child{margin-top: 0;}
+			.mui-bar-nav{background-color: #fff;}
+			.mui-media-body img{width: 13px;height: 13px;}
+		</style>
+	</head>
+
+	<body>
+<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+  <div class="mui-scroll">	
+  	
+	<header class="mui-bar mui-bar-nav">
+	    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+	     <h1 class="mui-title">为您推荐</h1>
+	</header>
+		
+		<div class="mui-content" id="content" v-cloak>
+			<ul id="product" class="mui-table-view mui-product tap-view orderTap">
+				<li class="mui-table-view-cell mui-collapse mui-col-xs-3">
+					<a class="mui-navigate-right" id="0,0" href="#">综合</a>
+				</li>
+				<li class="mui-table-view-cell mui-collapse mui-col-xs-3">
+					<a class="mui-navigate-right" id="1,1" href="#">价格</a>
+				</li>
+				<li class="mui-table-view-cell mui-collapse mui-col-xs-3">
+					<a class="mui-navigate-right" id="2,1" href="#">销量</a>
+				</li>
+				<li class="mui-table-view-cell mui-collapse mui-col-xs-3" >
+					<a  id="btn_serach" >
+						<span class="mui-icon iconfont icon-fenlei"></span>
+					</a>
+				</li>
+				
+			</ul>
+		    <div class="home-fashion mui-content-padded">
+				<ul class="mui-table-view mui-grid-view grid" id="good" v-if="layout == 'grid'">
+					<li class="mui-table-view-cell mui-media mui-col-xs-6" v-for="(good,index) in goods">
+						<a class="item" @tap="open_details(good)">
+							<img class="mui-media-object" :src="good.imgSrc">
+							<div class="mui-content-padded">
+								<span class="mui-media-body mui-ellipsis-2">
+									<img v-if="good.type==1" src="../../images/taobao.png"/>
+									<img v-if="good.type==2" src="../../images/bg_label_jd.png"/>
+									<img v-if="good.type==3" src="../../images/bg_label_tm.png"/>
+									{{good.title}}
+								</span>
+								<div class="discount">
+									<span v-if="good.couponAmt==''">券 0</span>
+									<span v-if="good.couponAmt!=''">券 {{good.couponAmt}}</span>
+									<span>
+										<i v-text="'返 '+good.commission"></i>
+									</span>
+								</div>
+								<p>¥<b>{{good.salePrice-good.couponAmt|tradeOffs}}</b>
+									<i>￥{{good.salePrice}}</i>
+									<span>月售 {{good.monthlySale}}</span>
+								</p>
+							</div>								
+						</a>
+					</li>
+				</ul>
+				
+				
+				<ul class="mui-table-view list" v-if="layout == 'list'">
+				    <li class="mui-table-view-cell mui-media" v-for="(good,index) in goods" style="padding: 5px 5px;margin: 5px 0 5px;">
+				        <a href="javascript:;"  @tap="open_details(good)">
+				            <img class="mui-media-object mui-pull-left" :src="good.imgSrc">
+				            <div class="mui-media-body mui-ellipsis-2" style="font-size: 14px;">
+				            		<img v-if="good.type==1" src="../../images/taobao.png"/>
+									<img v-if="good.type==2" src="../../images/bg_label_jd.png"/>
+									<img v-if="good.type==3" src="../../images/bg_label_tm.png"/>
+				                	{{good.title}}				               
+				            </div>
+				            <div class="discount">
+									<span v-if="good.couponAmt==''">券 0</span>
+									<span v-if="good.couponAmt!=''">券 {{good.couponAmt}}</span>
+									<i>返 {{good.commission}}</i>
+								</div>
+								<p>
+									<span class="mui-pull-left"></span>¥<b>{{good.salePrice-good.couponAmt|tradeOffs}}</b>
+									<i v-if="good.type==1">淘宝价：{{good.salePrice}}</i>
+									<i v-if="good.type==2">京东价：{{good.salePrice}}</i>
+									<i v-if="good.type==3">天猫价：{{good.salePrice}}</i>
+									<span class="mui-pull-right">月售 {{good.monthlySale}}</span>
+								</p>
+				        </a>
+				    </li>
+				</ul>
+				
+				
+	        </div>
+		</div>
+    </div>
+</div>		
+		
+<script src="../../js/mui.min.js"></script>
+<script src="j../../s/mui.lazyload.js"></script>
+<script src="../../js/api.js"></script>
+<script src="../../js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/constant.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/copy.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init({
+				swipeBack: false ,//启用右滑关闭功能
+				pullRefresh: {
+					container: '#pullrefresh',
+					down: {
+						  style:'circle',   //必选，下拉刷新样式，目前支持原生5+ ‘circle’ 样式
+					      color:'#2BD009',  //可选，默认“#2BD009” 下拉刷新控件颜色
+					      height:'50px',    //可选,默认50px.下拉刷新控件的高度,
+					      range:'100px',    //可选 默认100px,控件可下拉拖拽的范围
+					      offset:'0px',     //可选 默认0px,下拉刷新控件的起始位置
+					      auto: false,       //可选,默认false.首次加载自动上拉刷新一次
+						callback: pulldownRefresh
+					},
+					up: {
+						height:10,
+						contentinit:'正在加载中...',
+						contentrefresh: '正在加载中...',
+						contentnomore:'———— 我是有底线的   ———',
+						callback: pullupRefresh
+					}
+				}
+			});
+			
+			
+			
+			var goodsListPage = new Vue({
+				el: '#content',
+				data: {
+					layout: 'grid',
+					goods: []
+				},
+				filters:{
+					tradeOffs:function(value){
+						value = value.toFixed(2);
+						return parseFloat(value);
+					}
+				}
+			})
+			
+			
+			mui.plusReady(function(){
+				var self = plus.webview.currentWebview();
+				
+				goodsListPage.goods = self.goods;
+				/***
+				 * 去掉边框
+				 */
+				plus.webview.currentWebview().setStyle({
+					scrollIndicator: 'none'
+				});
+			
+				
+			})
+			
+			
+			var titleNView = {  
+			    backgroundColor: '#f7f7f7',//导航栏背景色  
+			    titleText: '',//导航栏标题  
+			    titleColor: '#000000',//文字颜色  
+			    type:'transparent',//透明渐变样式  
+			    autoBackButton: true,//自动绘制返回箭头  
+			    splitLine:{//底部分割线  
+			        color:'#cccccc'  
+			    }  
+			}  
+			
+			function open_details(item) {
+				titleNView.titleText = item.title;
+				mui.openWindow({
+					id:'/view/goods/details/goodsDetails.html',
+					url:'/view/goods/details/goodsDetails.html',
+					extras:{
+						goods:item,
+						goodsList:goodsListPage.goods
+					},
+					show:{
+						aniShow:'slide-in-right'
+					},
+		            waiting: {
+		                 autoShow: false //自动显示等待框，默认为true
+		            },
+		             styles:{  
+				        titleNView:titleNView,
+			        	popGesture: 'none'  
+				    } 
+				})
+				
+				
+					
+			}
+			
+			
+			/***
+			 * 下拉
+			 */
+			function pulldownRefresh(){
+				ajaxRequestGoods();
+				mui.toast('刷新成功');
+			    mui('#pullrefresh').pullRefresh().endPulldown();
+				 
+			}
+			
+			/***
+			 * 上拉刷新
+			 */
+			function pullupRefresh(){
+				this.endPullupToRefresh(true);
+				return;
+			}
+			
+			
+			mui(".orderTap").on("tap","a",function(e){
+				var dateTime = new Date();
+				var ids = this.getAttribute("id");
+				
+				if(ids=='openPopover'){
+					return ;
+				}
+				
+				if(ids=='btn_serach'){
+					if(goodsListPage.layout=='list'){
+						document.getElementById("btn_serach").innerHTML = '<span class="mui-icon iconfont icon-fenlei"></span>';
+						goodsListPage.layout = 'grid';
+					}else{
+						document.getElementById("btn_serach").innerHTML = '<span class="mui-icon mui-icon-bars"></span>';
+						goodsListPage.layout = 'list';
+					}
+					return;
+				}
+				
+				
+				var arr = ids.split(",");
+				
+				sortType = arr[0];
+				sort = arr[1];
+				
+				
+				var sortTypeNum = parseInt(sortType);
+				var sortParInt = parseInt(sort);
+				switch(sortTypeNum){
+					case 0:
+					   if(sortParInt==1){
+							goodsListPage.goods.sort(function(a,b){
+						        return a.couponAmt - b.couponAmt
+						    });
+						}else{
+							goodsListPage.goods.sort(function(a,b){
+						        return b.couponAmt - a.couponAmt
+						    });
+						}
+					   break;
+					case 1:
+						 if(sortParInt==1){
+							goodsListPage.goods.sort(function(a,b){
+						        return a.salePrice - b.salePrice
+						    });
+						}else{
+							goodsListPage.goods.sort(function(a,b){
+						        return b.salePrice - a.salePrice
+						    });
+						}
+					  break;
+					case 2:
+					 	if(sortParInt==1){
+							goodsListPage.goods.sort(function(a,b){
+						        return a.monthlySale - b.monthlySale;
+						    });
+						}else{
+							goodsListPage.goods.sort(function(a,b){
+						        return b.monthlySale - a.monthlySale
+						    });
+						}
+					
+					   break;
+				}
+				
+				
+				this.removeAttribute("id");
+				if(sortParInt==1){
+					this.setAttribute('id',sortType+',2');
+				}else{
+					this.setAttribute('id',sortType+',1');
+				}
+				
+			})
+			
+			
+			/***
+			 * 
+			 * @param {Object} seachType   搜索类型
+			 * @param {Object} value	       类型值
+			 * @param {Object} uid		       用户id
+			 * @param {Object} pageNumber  页码
+			 * @param {Object} hasCoupon   
+			 * @param {Object} isTmall
+			 */
+			function ajaxRequestGoods(){
+					var data = {
+						method:'goods00010',
+						module:goodApi,
+						requestId:requestId,
+						sign:signMd5,
+						timeStamp:timeStamp,
+						searchType:'1'
+					}
+					mui.getJSON(httpUrl,data,function(res){
+						if(res.respCode=='0000'){
+							goodsListPage.goods = [];
+							goodsListPage.goods = res.result.concat(goodsListPage.goods);
+						}
+					});
+				
+			}
+			
+			
+	
+		</script>
+		
+		
+		
+	</body>
+
+</html>

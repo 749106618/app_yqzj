@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../../../css/self/setting.css"/>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">修改昵称</h1>
+		</header>
+		<!--修改昵称-->
+		<div class="mui-content">
+			<div class="mui-content-padded">
+				<form class="mui-input-group">				
+					<div class="mui-input-row">
+						<input type="text" id="nickName" class="mui-input-clear" placeholder="请输入新昵称">
+					</div>
+				</form>		
+				<div class="mui-content-padded">		
+					<button type="button" id="modifyNickname" class="mui-btn mui-btn-block mui-btn-primary">确定修改</button>
+				</div>
+			</div>	
+		</div>
+		<script src="../../../../js/mui.min.js"></script>
+		<script src="../../../../js/api.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../../../js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init({swipeBack: true});
+			
+			var vm = new Vue({
+				el:'',
+				data:{
+					user:{}
+				}
+			})
+			
+			mui.plusReady(function(){
+				var self = plus.webview.currentWebview();
+				vm.user = self.user;
+				
+			})
+			
+			
+			/*修改昵称*/
+			document.getElementById("modifyNickname").addEventListener('tap',function(){
+				var nickName = document.getElementById("nickName").value;
+				if(nickName==''){
+					mui.toast("请输入用户昵称！")
+					return ;
+				}
+				var sex = vm.user.sex==''?0:vm.user.sex;
+				mui.post(httpUrl,{
+				   method:'user00004',
+					module:userApi,
+					requestId:requestId,
+					sign:signMd5,
+					timeStamp:timeStamp,
+					id:vm.user.id,
+					sex:sex,
+					nickName:nickName
+				},function(data){
+					mui.toast(data.respMsg);
+					mui.back();
+					
+					/**
+					 * 当用户修改后刷新设置以及个人中心
+					 */
+					var targetUser = plus.webview.getWebviewById("view/self/self.html");
+					mui.fire(targetUser, "refreshUser", {content:"刷新个人中心"});
+					
+					 var list = plus.webview.currentWebview().opener();　　　　
+                        //refresh是A页面自定义事件
+                     mui.fire(list, 'refreshSetting');
+				  //refresh是A页面自定义事件
+				//返回true,继续页面关闭逻辑
+				},'json'
+					
+				)
+			})
+		</script>
+	</body>
+
+</html>
